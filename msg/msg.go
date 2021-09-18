@@ -123,6 +123,7 @@ func (p *Printer) Warn(text string) {
 // WarnString is like Warn but returns a string rather than printing it
 func (p *Printer) WarnString(text string) string {
 	warn := color.New(p.ColorWarn)
+
 	if p.SymbolWarn != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolWarn, text)
 	}
@@ -142,6 +143,7 @@ func (p *Printer) Fail(text string) {
 // FailString is like Fail but returns a string rather than printing it
 func (p *Printer) FailString(text string) string {
 	fail := color.New(p.ColorFail)
+
 	if p.SymbolWarn != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolFail, text)
 	}
@@ -161,6 +163,7 @@ func (p *Printer) Good(text string) {
 // GoodString is like Good but returns a string rather than printing it
 func (p *Printer) GoodString(text string) string {
 	good := color.New(p.ColorGood)
+
 	if p.SymbolGood != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
 	}
@@ -180,6 +183,7 @@ func (p *Printer) Info(text string) {
 // InfoString is like Info but returns a string rather than printing it
 func (p *Printer) InfoString(text string) string {
 	info := color.New(p.ColorInfo)
+
 	if p.SymbolInfo != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolInfo, text)
 	}
