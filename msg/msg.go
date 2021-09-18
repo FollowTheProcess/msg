@@ -129,6 +129,25 @@ func (p *Printer) WarnString(text string) string {
 	return warn.Sprint(text)
 }
 
+// Fail prints an error message using the configured printer
+func (p *Printer) Fail(text string) {
+	fail := color.New(p.ColorFail)
+
+	if p.SymbolWarn != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolFail, text)
+	}
+	fail.Fprintln(p.Out, text)
+}
+
+// FailString is like Fail but returns a string rather than printing it
+func (p *Printer) FailString(text string) string {
+	fail := color.New(p.ColorFail)
+	if p.SymbolWarn != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolFail, text)
+	}
+	return fail.Sprint(text)
+}
+
 // Title prints a Title message using the default printer
 //
 // A Title is distinguishable from all other constructs in msg as it will
@@ -142,4 +161,10 @@ func Title(text string) {
 func Warn(text string) {
 	p := newDefault()
 	p.Warn(text)
+}
+
+// Fail prints an error message using the default printer
+func Fail(text string) {
+	p := newDefault()
+	p.Fail(text)
 }

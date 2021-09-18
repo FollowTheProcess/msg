@@ -29,17 +29,14 @@ func main() {
 
 	msg.Title("Stuff below here")
 
-	printer.Warn("I'm a warning")
-	fmt.Println("I'm under the warning")
+	printer.Fail("I'm an error")
+	fmt.Println("I'm below the error")
 
-	// Remove the symbol
-	printer.SymbolWarn = ""
-	printer.Warn("I'm a warning without a symbol")
-	fmt.Println("I'm under this warning")
+	s := printer.FailString("I'm an error string")
+	fmt.Println(s)
 
-	printer.SymbolWarn = "⛔️"
-	printer.Warn("I'm a warning with this symbol now")
-	fmt.Println("I'm under yet another warning")
+	printer.SymbolFail = "🤬"
+	printer.Fail("I'm an error with a different symbol")
 
-	msg.Warn("Default warning")
+	msg.Fail("I'm the default error")
 }
