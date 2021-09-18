@@ -1,5 +1,5 @@
 project_name := "msg"
-project_entry_point := justfile_directory()
+project_root := justfile_directory()
 coverage_data := "coverage.out"
 coverage_html := "coverage.html"
 goreleaser_dist := "dist"
@@ -12,10 +12,6 @@ _default:
 # Tidy up dependencies in go.mod and go.sum
 tidy:
     go mod tidy
-
-# Compile the project binary
-build: tidy fmt
-    go build -ldflags="-s -w -X main.Version=dev-{{ commit_sha }}" -o {{ project_name }} {{ project_entry_point }}
 
 # Run go fmt on all project files
 fmt:
@@ -44,4 +40,4 @@ clean:
 check: test lint
 
 # Run all recipes (other than clean) in a sensible order
-all: build test lint cover
+all: test lint cover
