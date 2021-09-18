@@ -52,18 +52,11 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Set up Go 1.17
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          version: latest
-          args: release --rm-dist
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        with:
+          draft: false
+          prerelease: false
