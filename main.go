@@ -5,7 +5,6 @@ Scratchpad for development. msg is a library.
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/FollowTheProcess/msg/msg"
@@ -29,14 +28,9 @@ func main() {
 
 	msg.Title("Stuff below here")
 
-	printer.Fail("I'm an error")
-	fmt.Println("I'm below the error")
+	printer.Good("Something good happened")
 
-	s := printer.FailString("I'm an error string")
-	fmt.Println(s)
+	printer.SymbolGood = "🎉"
 
-	printer.SymbolFail = "🤬"
-	printer.Fail("I'm an error with a different symbol")
-
-	msg.Fail("I'm the default error")
+	printer.Good("Something good with a different symbol!")
 }

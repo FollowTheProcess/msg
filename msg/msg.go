@@ -148,6 +148,25 @@ func (p *Printer) FailString(text string) string {
 	return fail.Sprint(text)
 }
 
+// Good prints an error message using the configured printer
+func (p *Printer) Good(text string) {
+	fail := color.New(p.ColorGood)
+
+	if p.SymbolGood != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
+	}
+	fail.Fprintln(p.Out, text)
+}
+
+// GoodString is like Fail but returns a string rather than printing it
+func (p *Printer) GoodString(text string) string {
+	fail := color.New(p.ColorGood)
+	if p.SymbolGood != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
+	}
+	return fail.Sprint(text)
+}
+
 // Title prints a Title message using the default printer
 //
 // A Title is distinguishable from all other constructs in msg as it will
@@ -167,4 +186,10 @@ func Warn(text string) {
 func Fail(text string) {
 	p := newDefault()
 	p.Fail(text)
+}
+
+// Good prints a success message using the default printer
+func Good(text string) {
+	p := newDefault()
+	p.Good(text)
 }
