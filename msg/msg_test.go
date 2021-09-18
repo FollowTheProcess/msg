@@ -5,6 +5,7 @@ package msg
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"testing"
@@ -55,7 +56,7 @@ func TestPrinter_Title(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
 
-	want := "\nI'm a Title\n"
+	want := "\nI'm a Title\n\n"
 	p.Title("I'm a Title")
 	is.Equal(rb.String(), want)
 }
@@ -64,10 +65,10 @@ func TestPrinter_TitleSymbol(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
 
-	// Change the symbol
+	// Add a symbol
 	p.SymbolTitle = "💨"
 
-	want := "\n💨  I'm a Title\n"
+	want := "\n💨  I'm a Title\n\n"
 	p.Title("I'm a Title")
 	is.Equal(rb.String(), want)
 }
@@ -90,5 +91,47 @@ func TestPrinter_TitleStringSymbol(t *testing.T) {
 
 	want := "💨  I'm a Titlestring"
 	got := p.TitleString("I'm a Titlestring")
+	is.Equal(got, want)
+}
+
+func TestPrinter_Warn(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	want := fmt.Sprintf("%s  I'm a Warning\n", defaultWarnSymbol)
+	p.Warn("I'm a Warning")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_WarnSymbol(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	// Change the symbol
+	p.SymbolWarn = "☢️"
+
+	want := "☢️  I'm a Warning\n"
+	p.Warn("I'm a Warning")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_WarnString(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	want := fmt.Sprintf("%s  I'm a Warnstring", defaultWarnSymbol)
+	got := p.WarnString("I'm a Warnstring")
+	is.Equal(got, want)
+}
+
+func TestPrinter_WarnStringSymbol(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	// Change the symbol
+	p.SymbolWarn = "☢️"
+
+	want := "☢️  I'm a Warnstring"
+	got := p.WarnString("I'm a Warnstring")
 	is.Equal(got, want)
 }
