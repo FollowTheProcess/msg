@@ -13,7 +13,7 @@ import (
 	"github.com/matryer/is"
 )
 
-// testPrinter returns a default printer but configured to output to 'out'
+// testPrinter returns a default symbols and colors but configured to output to 'out'
 // each test should set up their own 'out' from which to read the printed output
 func testPrinter(out io.Writer) *Printer {
 	printer := newDefault()
@@ -105,6 +105,17 @@ func TestPrinter_Titlef(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
+func TestPrinter_Stitlef(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("Title about: %s", about)
+	got := p.Stitlef("Title about: %s", about)
+	is.Equal(got, want)
+}
+
 func TestPrinter_Warn(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
@@ -143,6 +154,17 @@ func TestPrinter_Swarn(t *testing.T) {
 
 	want := fmt.Sprintf("%s  I'm a Swarn", defaultWarnSymbol)
 	got := p.Swarn("I'm a Swarn")
+	is.Equal(got, want)
+}
+
+func TestPrinter_Swarnf(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Warning about: %s", defaultWarnSymbol, about)
+	got := p.Swarnf("Warning about: %s", about)
 	is.Equal(got, want)
 }
 
@@ -200,6 +222,17 @@ func TestPrinter_SfailSymbol(t *testing.T) {
 	is.Equal(got, want)
 }
 
+func TestPrinter_Sfailf(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Error about: %s", defaultFailSymbol, about)
+	got := p.Sfailf("Error about: %s", about)
+	is.Equal(got, want)
+}
+
 func TestPrinter_Failf(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
@@ -232,24 +265,24 @@ func TestPrinter_GoodSymbol(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
-func TestPrinter_GoodString(t *testing.T) {
+func TestPrinter_Sgood(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
-	want := fmt.Sprintf("%s  I'm a Goodstring", defaultGoodSymbol)
-	got := p.GoodString("I'm a Goodstring")
+	want := fmt.Sprintf("%s  I'm a Sgood", defaultGoodSymbol)
+	got := p.Sgood("I'm a Sgood")
 	is.Equal(got, want)
 }
 
-func TestPrinter_GoodStringSymbol(t *testing.T) {
+func TestPrinter_SgoodSymbol(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
 	// Change the symbol
 	p.SymbolGood = "🎉"
 
-	want := "🎉  I'm a Goodstring"
-	got := p.GoodString("I'm a Goodstring")
+	want := "🎉  I'm a Sgood"
+	got := p.Sgood("I'm a Sgood")
 	is.Equal(got, want)
 }
 
@@ -262,6 +295,17 @@ func TestPrinter_Goodf(t *testing.T) {
 	want := fmt.Sprintf("%s  Success: %s\n", defaultGoodSymbol, about)
 	p.Goodf("Success: %s", about)
 	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_Sgoodf(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Success: %s", defaultGoodSymbol, about)
+	got := p.Sgoodf("Success: %s", about)
+	is.Equal(got, want)
 }
 
 func TestPrinter_Info(t *testing.T) {
@@ -317,6 +361,17 @@ func TestPrinter_Infof(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
+func TestPrinter_Sinfof(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Info: %s", defaultInfoSymbol, about)
+	got := p.Sinfof("Info: %s", about)
+	is.Equal(got, want)
+}
+
 func TestPrinter_Text(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
@@ -344,4 +399,15 @@ func TestPrinter_Textf(t *testing.T) {
 	want := fmt.Sprintf("Some text about: %s\n", about)
 	p.Textf("Some text about: %s", about)
 	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_Stextf(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("Text: %s", about)
+	got := p.Stextf("Text: %s", about)
+	is.Equal(got, want)
 }
