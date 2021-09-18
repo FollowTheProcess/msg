@@ -79,8 +79,8 @@ func newDefault() *Printer {
 
 // Title prints a Title message using the configured printer
 //
-// A Title is distinguishable from most other constructs in msg as it will
-// always have newlines before and after it
+// A Title is distinguishable from all other constructs in msg as it will
+// has 1 newline before and 2 newlines after it
 //
 // If the Printer has a SymbolTitle, it will be prefixed onto 'text'
 // with 2 spaces separating them
@@ -89,9 +89,9 @@ func (p *Printer) Title(text string) {
 	// Title by default has an empty string as a symbol
 	// sort the spacing out if user sets a symbol
 	if p.SymbolTitle != "" {
-		text = fmt.Sprintf("\n%s  %s\n", p.SymbolTitle, text)
+		text = fmt.Sprintf("\n%s  %s\n\n", p.SymbolTitle, text)
 	} else {
-		text = fmt.Sprintf("\n%s\n", text)
+		text = fmt.Sprintf("\n%s\n\n", text)
 	}
 	title.Fprint(p.Out, text)
 }
@@ -99,6 +99,7 @@ func (p *Printer) Title(text string) {
 // TitleString is like Title but it returns a string rather than printing it
 //
 // The returned string will have all it's leading and trailing whitespace/newlines trimmed
+// so you have access to the raw string
 func (p *Printer) TitleString(text string) string {
 	title := color.New(p.ColorTitle, color.Bold)
 	// Title by default does not have a symbol so if user adds one
@@ -109,11 +110,36 @@ func (p *Printer) TitleString(text string) string {
 	return title.Sprint(text)
 }
 
+// Warn prints a Warning message using the configured printer
+func (p *Printer) Warn(text string) {
+	warn := color.New(p.ColorWarn)
+
+	if p.SymbolWarn != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolWarn, text)
+	}
+	warn.Fprintln(p.Out, text)
+}
+
+// WarnString is like Warn but returns a string rather than printing it
+func (p *Printer) WarnString(text string) string {
+	warn := color.New(p.ColorWarn)
+	if p.SymbolWarn != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolWarn, text)
+	}
+	return warn.Sprint(text)
+}
+
 // Title prints a Title message using the default printer
 //
-// A Title is distinguishable from most other constructs in msg as it will
-// always have newlines before and after it
+// A Title is distinguishable from all other constructs in msg as it will
+// has 1 newline before and 2 newlines after it
 func Title(text string) {
 	p := newDefault()
 	p.Title(text)
+}
+
+// Warn prints a warning message using the default printer
+func Warn(text string) {
+	p := newDefault()
+	p.Warn(text)
 }
