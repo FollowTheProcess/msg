@@ -177,3 +177,45 @@ func TestPrinter_FailStringSymbol(t *testing.T) {
 	got := p.FailString("I'm a Failstring")
 	is.Equal(got, want)
 }
+
+func TestPrinter_Good(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	want := fmt.Sprintf("%s  I'm a Success\n", defaultGoodSymbol)
+	p.Good("I'm a Success")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_GoodSymbol(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	// Change the symbol
+	p.SymbolGood = "🎉"
+
+	want := "🎉  I'm a Success\n"
+	p.Good("I'm a Success")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_GoodString(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	want := fmt.Sprintf("%s  I'm a Goodstring", defaultGoodSymbol)
+	got := p.GoodString("I'm a Goodstring")
+	is.Equal(got, want)
+}
+
+func TestPrinter_GoodStringSymbol(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	// Change the symbol
+	p.SymbolGood = "🎉"
+
+	want := "🎉  I'm a Goodstring"
+	got := p.GoodString("I'm a Goodstring")
+	is.Equal(got, want)
+}
