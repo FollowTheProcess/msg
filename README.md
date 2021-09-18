@@ -21,7 +21,42 @@ Full credit goes to [fatih/color] for handling all the difficult colouring stuff
 
 ## Installation
 
+To use `msg` in your code:
+
+```shell
+go get github.com/FollowTheProcess/msg@latest
+```
+
 ## Quickstart
+
+The quickest way to get started is to use the pre-configured functions:
+
+``` go
+package main
+
+import "github.com/FollowTheProcess/msg"
+
+func main() {
+    msg.Title("Your Title here")
+    // Do some stuff
+
+    // Give the user an update
+    msg.Info("Getting your files")
+
+    // Report success
+    msg.Good("It worked!")
+
+    // Uh oh, an error
+    msg.Fail("Oh no!, file not found")
+
+    // Warn a user about something
+    msg.Warn("This action is irreversible")
+}
+```
+
+This will get you something that looks like this:
+
+![demo2](https://github.com/FollowTheProcess/msg/raw/main/img/demo2.png)
 
 ### Credits
 
