@@ -29,8 +29,5 @@ func main() {
 	msg.Title("Stuff below here")
 
 	printer.Info("Something happened")
-
-	printer.SymbolInfo = "🔎"
-
-	printer.Info("Something happened with a different symbol!")
+	printer.Text("Hello")
 }

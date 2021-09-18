@@ -190,6 +190,17 @@ func (p *Printer) InfoString(text string) string {
 	return info.Sprint(text)
 }
 
+// Text prints a normal, uncoloured message
+// you could argue we don't need this as all is does is call fmt.Fprintln but we're here now
+func (p *Printer) Text(text string) {
+	fmt.Fprintln(p.Out, text)
+}
+
+// TextString is like Text but returns a string rather than printing it
+func (p *Printer) TextString(text string) string {
+	return fmt.Sprint(text)
+}
+
 // Title prints a Title message using the default printer
 //
 // A Title is distinguishable from all other constructs in msg as it will
@@ -221,4 +232,10 @@ func Good(text string) {
 func Info(text string) {
 	p := newDefault()
 	p.Info(text)
+}
+
+// Text prints a normal, uncoloured message using the default printer
+func Text(text string) {
+	p := newDefault()
+	p.Text(text)
 }

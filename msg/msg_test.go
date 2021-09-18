@@ -261,3 +261,12 @@ func TestPrinter_InfoStringSymbol(t *testing.T) {
 	got := p.InfoString("I'm an Infostring")
 	is.Equal(got, want)
 }
+
+func TestPrinter_Text(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	want := fmt.Sprintln("I'm some normal text")
+	p.Text("I'm some normal text")
+	is.Equal(rb.String(), want)
+}
