@@ -17,6 +17,8 @@ So here it is :tada:
 
 Full credit goes to [fatih/color] for handling all the difficult colouring stuff for me and to [ines/wasabi] for the API design.
 
+![demo](https://github.com/FollowTheProcess/msg/raw/main/img/demo.png)
+
 ## Installation
 
 ## Quickstart
