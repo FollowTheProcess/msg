@@ -219,3 +219,45 @@ func TestPrinter_GoodStringSymbol(t *testing.T) {
 	got := p.GoodString("I'm a Goodstring")
 	is.Equal(got, want)
 }
+
+func TestPrinter_Info(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	want := fmt.Sprintf("%s  I'm some Info\n", defaultInfoSymbol)
+	p.Info("I'm some Info")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_InfoSymbol(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	// Change the symbol
+	p.SymbolInfo = "🔎"
+
+	want := "🔎  I'm some Info\n"
+	p.Info("I'm some Info")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_InfoString(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	want := fmt.Sprintf("%s  I'm some Info", defaultInfoSymbol)
+	got := p.InfoString("I'm some Info")
+	is.Equal(got, want)
+}
+
+func TestPrinter_InfoStringSymbol(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	// Change the symbol
+	p.SymbolInfo = "🔎"
+
+	want := "🔎  I'm an Infostring"
+	got := p.InfoString("I'm an Infostring")
+	is.Equal(got, want)
+}

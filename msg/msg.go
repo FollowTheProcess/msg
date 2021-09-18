@@ -18,7 +18,7 @@ const (
 	defaultGoodSymbol  = "✔"
 
 	// Default colors
-	defaultInfoColor  = color.FgCyan
+	defaultInfoColor  = color.FgHiCyan
 	defaultTitleColor = color.FgCyan
 	defaultWarnColor  = color.FgYellow
 	defaultFailColor  = color.FgRed
@@ -148,23 +148,42 @@ func (p *Printer) FailString(text string) string {
 	return fail.Sprint(text)
 }
 
-// Good prints an error message using the configured printer
+// Good prints a success message using the configured printer
 func (p *Printer) Good(text string) {
-	fail := color.New(p.ColorGood)
+	good := color.New(p.ColorGood)
 
 	if p.SymbolGood != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
 	}
-	fail.Fprintln(p.Out, text)
+	good.Fprintln(p.Out, text)
 }
 
-// GoodString is like Fail but returns a string rather than printing it
+// GoodString is like Good but returns a string rather than printing it
 func (p *Printer) GoodString(text string) string {
-	fail := color.New(p.ColorGood)
+	good := color.New(p.ColorGood)
 	if p.SymbolGood != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
 	}
-	return fail.Sprint(text)
+	return good.Sprint(text)
+}
+
+// Info prints an information message using the configured printer
+func (p *Printer) Info(text string) {
+	info := color.New(p.ColorInfo)
+
+	if p.SymbolInfo != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolInfo, text)
+	}
+	info.Fprintln(p.Out, text)
+}
+
+// InfoString is like Info but returns a string rather than printing it
+func (p *Printer) InfoString(text string) string {
+	info := color.New(p.ColorInfo)
+	if p.SymbolInfo != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolInfo, text)
+	}
+	return info.Sprint(text)
 }
 
 // Title prints a Title message using the default printer
@@ -192,4 +211,10 @@ func Fail(text string) {
 func Good(text string) {
 	p := newDefault()
 	p.Good(text)
+}
+
+// Info prints an information message using the default printer
+func Info(text string) {
+	p := newDefault()
+	p.Info(text)
 }
