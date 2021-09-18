@@ -5,11 +5,19 @@
 [![GitHub](https://img.shields.io/github/v/release/FollowTheProcess/msg?logo=github&sort=semver)](https://github.com/FollowTheProcess/msg)
 [![CI](https://github.com/FollowTheProcess/msg/workflows/CI/badge.svg)](https://github.com/FollowTheProcess/msg/actions?query=workflow%3ACI)
 
-An opinionated console printing toolkit for Go CLIs.
+:rocket: A lightweight console printing toolkit for Go CLIs.
 
 * Free software: MIT License
 
 ## Project Description
+
+When writing [pytoil] I discovered [ines/wasabi] and absolutely loved it immediately! Then when I started learning go and writing some CLI's I kept wishing I had it there too.
+
+So here it is :tada:
+
+Full credit goes to [fatih/color] for handling all the difficult colouring stuff for me and to [ines/wasabi] for the API design.
+
+:warning: `msg` is still in pre-release development. Check back later!
 
 ## Installation
 
@@ -18,3 +26,7 @@ An opinionated console printing toolkit for Go CLIs.
 ### Credits
 
 This package was created with [cookiecutter](https://github.com/cookiecutter/cookiecutter) and the [FollowTheProcess/go_cookie](https://github.com/FollowTheProcess/go_cookie) project template.
+
+[pytoil]: https://github.com/FollowTheProcess/pytoil
+[ines/wasabi]: https://github.com/ines/wasabi
+[fatih/color]: https://github.com/fatih/color
