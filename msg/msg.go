@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -59,11 +60,9 @@ type Printer struct {
 	Out io.Writer
 }
 
-// Default constructs and returns a default Printer with sensible colors and symbols
-// if you just want a nice, standard method of printing things to the user and don't want
-// to customise anything, use the returned Printer from this function.
-func Default() Printer {
-	return Printer{
+// newDefault constructs and returns a default Printer with sensible colors and symbols
+func newDefault() *Printer {
+	return &Printer{
 		SymbolInfo:  defaultInfoSymbol,
 		SymbolTitle: defaultTitleSymbol,
 		SymbolWarn:  defaultWarnSymbol,
@@ -78,11 +77,18 @@ func Default() Printer {
 	}
 }
 
+// Title prints a Title message using the configured printer
+//
+// A Title is distinguishable from most other constructs in msg as it will
+// always have newlines before and after it
+//
+// If the Printer has a SymbolTitle, it will be prefixed onto 'text'
+// with 2 spaces separating them
 func (p *Printer) Title(text string) {
 	title := color.New(p.ColorTitle, color.Bold)
-	// Title by default does not have a symbol so if user adds one
-	// make sure the text is adequately spaced
-	if p.SymbolTitle != defaultTitleSymbol {
+	// Title by default has an empty string as a symbol
+	// sort the spacing out if user sets a symbol
+	if p.SymbolTitle != "" {
 		text = fmt.Sprintf("\n%s  %s\n", p.SymbolTitle, text)
 	} else {
 		text = fmt.Sprintf("\n%s\n", text)
@@ -90,12 +96,24 @@ func (p *Printer) Title(text string) {
 	title.Fprint(p.Out, text)
 }
 
+// TitleString is like Title but it returns a string rather than printing it
+//
+// The returned string will have all it's leading and trailing whitespace/newlines trimmed
 func (p *Printer) TitleString(text string) string {
 	title := color.New(p.ColorTitle, color.Bold)
 	// Title by default does not have a symbol so if user adds one
 	// make sure the text is adequately spaced
-	if p.SymbolTitle != defaultTitleSymbol {
-		text = fmt.Sprintf("%s  %s", p.SymbolTitle, text)
+	if p.SymbolTitle != "" {
+		text = fmt.Sprintf("%s  %s", p.SymbolTitle, strings.TrimSpace(text))
 	}
 	return title.Sprint(text)
+}
+
+// Title prints a Title message using the default printer
+//
+// A Title is distinguishable from most other constructs in msg as it will
+// always have newlines before and after it
+func Title(text string) {
+	p := newDefault()
+	p.Title(text)
 }
