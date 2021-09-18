@@ -30,26 +30,26 @@ const (
 type Printer struct {
 	// Symbols
 
-	// The symbol used to prefix Info and InfoString
+	// The symbol used to prefix Info and Sinfo
 	SymbolInfo string
-	// The symbol used to prefix Title and TitleString
+	// The symbol used to prefix Title and Stitle
 	SymbolTitle string
-	// The symbol used ot prefix Warn and WarnString
+	// The symbol used ot prefix Warn and Swarn
 	SymbolWarn string
-	// The symbol used to prefix Fail and FailString
+	// The symbol used to prefix Fail and Sfail
 	SymbolFail string
 	// The symbol used to prefix Good and GoodString
 	SymbolGood string
 
 	// Colors
 
-	// The color used for Info and InfoString
+	// The color used for Info and Sinfo
 	ColorInfo color.Attribute
-	// The color used for Title and TitleString
+	// The color used for Title and Stitle
 	ColorTitle color.Attribute
-	// The color used for Warn and WarnString
+	// The color used for Warn and Swarn
 	ColorWarn color.Attribute
-	// The color used for Fail and FailString
+	// The color used for Fail and Sfail
 	ColorFail color.Attribute
 	// The color used for Good and GoodString
 	ColorGood color.Attribute
@@ -80,7 +80,7 @@ func newDefault() *Printer {
 // Title prints a Title message
 //
 // A Title is distinguishable from all other constructs in msg as it will
-// has 1 newline before and 2 newlines after it
+// has 1 newline before and 2 newlines after it to create separation
 //
 // If the Printer has a SymbolTitle, it will be prefixed onto 'text'
 // with 2 spaces separating them
@@ -102,11 +102,11 @@ func (p *Printer) Titlef(format string, a ...interface{}) {
 	p.Title(text)
 }
 
-// TitleString is like Title but it returns a string rather than printing it
+// Stitle is like Title but it returns a string rather than printing it
 //
 // The returned string will have all it's leading and trailing whitespace/newlines trimmed
 // so you have access to the raw string
-func (p *Printer) TitleString(text string) string {
+func (p *Printer) Stitle(text string) string {
 	title := color.New(p.ColorTitle, color.Bold)
 	// Title by default does not have a symbol so if user adds one
 	// make sure the text is adequately spaced
@@ -132,8 +132,8 @@ func (p *Printer) Warnf(format string, a ...interface{}) {
 	p.Warn(text)
 }
 
-// WarnString is like Warn but returns a string rather than printing it
-func (p *Printer) WarnString(text string) string {
+// Swarn is like Warn but returns a string rather than printing it
+func (p *Printer) Swarn(text string) string {
 	warn := color.New(p.ColorWarn)
 
 	if p.SymbolWarn != "" {
@@ -158,8 +158,8 @@ func (p *Printer) Failf(format string, a ...interface{}) {
 	p.Fail(text)
 }
 
-// FailString is like Fail but returns a string rather than printing it
-func (p *Printer) FailString(text string) string {
+// Sfail is like Fail but returns a string rather than printing it
+func (p *Printer) Sfail(text string) string {
 	fail := color.New(p.ColorFail)
 
 	if p.SymbolWarn != "" {
@@ -204,8 +204,8 @@ func (p *Printer) Info(text string) {
 	info.Fprintln(p.Out, text)
 }
 
-// InfoString is like Info but returns a string rather than printing it
-func (p *Printer) InfoString(text string) string {
+// Sinfo is like Info but returns a string rather than printing it
+func (p *Printer) Sinfo(text string) string {
 	info := color.New(p.ColorInfo)
 
 	if p.SymbolInfo != "" {
@@ -226,8 +226,8 @@ func (p *Printer) Text(text string) {
 	fmt.Fprintln(p.Out, text)
 }
 
-// TextString is like Text but returns a string rather than printing it
-func (p *Printer) TextString(text string) string {
+// Stext is like Text but returns a string rather than printing it
+func (p *Printer) Stext(text string) string {
 	return fmt.Sprint(text)
 }
 

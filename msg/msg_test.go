@@ -73,24 +73,24 @@ func TestPrinter_TitleSymbol(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
-func TestPrinter_TitleString(t *testing.T) {
+func TestPrinter_Stitle(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
-	want := "I'm a Titlestring"
-	got := p.TitleString("I'm a Titlestring")
+	want := "I'm a Stitle"
+	got := p.Stitle("I'm a Stitle")
 	is.Equal(got, want)
 }
 
-func TestPrinter_TitleStringSymbol(t *testing.T) {
+func TestPrinter_StitleSymbol(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
 	// Change the symbol
 	p.SymbolTitle = "💨"
 
-	want := "💨  I'm a Titlestring"
-	got := p.TitleString("I'm a Titlestring")
+	want := "💨  I'm a Stitle"
+	got := p.Stitle("I'm a Stitle")
 	is.Equal(got, want)
 }
 
@@ -137,24 +137,24 @@ func TestPrinter_WarnSymbol(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
-func TestPrinter_WarnString(t *testing.T) {
+func TestPrinter_Swarn(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
-	want := fmt.Sprintf("%s  I'm a Warnstring", defaultWarnSymbol)
-	got := p.WarnString("I'm a Warnstring")
+	want := fmt.Sprintf("%s  I'm a Swarn", defaultWarnSymbol)
+	got := p.Swarn("I'm a Swarn")
 	is.Equal(got, want)
 }
 
-func TestPrinter_WarnStringSymbol(t *testing.T) {
+func TestPrinter_SwarnSymbol(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
 	// Change the symbol
 	p.SymbolWarn = "☢️"
 
-	want := "☢️  I'm a Warnstring"
-	got := p.WarnString("I'm a Warnstring")
+	want := "☢️  I'm a Swarn"
+	got := p.Swarn("I'm a Swarn")
 	is.Equal(got, want)
 }
 
@@ -179,24 +179,24 @@ func TestPrinter_FailSymbol(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
-func TestPrinter_FailString(t *testing.T) {
+func TestPrinter_Sfail(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
-	want := fmt.Sprintf("%s  I'm a Failstring", defaultFailSymbol)
-	got := p.FailString("I'm a Failstring")
+	want := fmt.Sprintf("%s  I'm a Sfail", defaultFailSymbol)
+	got := p.Sfail("I'm a Sfail")
 	is.Equal(got, want)
 }
 
-func TestPrinter_FailStringSymbol(t *testing.T) {
+func TestPrinter_SfailSymbol(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
 	// Change the symbol
 	p.SymbolFail = "🤬"
 
-	want := "🤬  I'm a Failstring"
-	got := p.FailString("I'm a Failstring")
+	want := "🤬  I'm a Sfail"
+	got := p.Sfail("I'm a Sfail")
 	is.Equal(got, want)
 }
 
@@ -285,24 +285,24 @@ func TestPrinter_InfoSymbol(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
-func TestPrinter_InfoString(t *testing.T) {
+func TestPrinter_Sinfo(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
 	want := fmt.Sprintf("%s  I'm some Info", defaultInfoSymbol)
-	got := p.InfoString("I'm some Info")
+	got := p.Sinfo("I'm some Info")
 	is.Equal(got, want)
 }
 
-func TestPrinter_InfoStringSymbol(t *testing.T) {
+func TestPrinter_SinfoSymbol(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
 	// Change the symbol
 	p.SymbolInfo = "🔎"
 
-	want := "🔎  I'm an Infostring"
-	got := p.InfoString("I'm an Infostring")
+	want := "🔎  I'm an Sinfo"
+	got := p.Sinfo("I'm an Sinfo")
 	is.Equal(got, want)
 }
 
@@ -326,12 +326,12 @@ func TestPrinter_Text(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
-func TestPrinter_TextString(t *testing.T) {
+func TestPrinter_Stext(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
 	want := "I'm some normal text"
-	got := p.TextString("I'm some normal text")
+	got := p.Stext("I'm some normal text")
 	is.Equal(got, want)
 }
 
