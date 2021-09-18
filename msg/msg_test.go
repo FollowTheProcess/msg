@@ -14,25 +14,25 @@ import (
 
 // testPrinter returns a default printer but configured to output to 'out'
 // each test should set up their own 'out' from which to read the printed output
-func testPrinter(out io.Writer) Printer {
-	printer := Default()
+func testPrinter(out io.Writer) *Printer {
+	printer := newDefault()
 	printer.Out = out
 	return printer
 }
 
 // setup returns a testPrinter configured to talk to a bytes.Buffer
 // and the pointer to the bytes.Buffer itself to be read from
-func setup() (*bytes.Buffer, Printer) {
+func setup() (*bytes.Buffer, *Printer) {
 	rb := bytes.NewBuffer(nil)
 	p := testPrinter(rb)
 
 	return rb, p
 }
 
-func TestDefault(t *testing.T) {
+func TestNewDefault(t *testing.T) {
 	is := is.New(t)
 
-	want := Printer{
+	want := &Printer{
 		SymbolInfo:  defaultInfoSymbol,
 		SymbolTitle: defaultTitleSymbol,
 		SymbolWarn:  defaultWarnSymbol,
@@ -46,12 +46,12 @@ func TestDefault(t *testing.T) {
 		Out:         os.Stdout,
 	}
 
-	got := Default()
+	got := newDefault()
 
 	is.Equal(got, want)
 }
 
-func TestTitle(t *testing.T) {
+func TestPrinter_Title(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
 
@@ -60,7 +60,7 @@ func TestTitle(t *testing.T) {
 	is.Equal(rb.String(), want)
 }
 
-func TestTitleSymbol(t *testing.T) {
+func TestPrinter_TitleSymbol(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
 
@@ -70,4 +70,25 @@ func TestTitleSymbol(t *testing.T) {
 	want := "\n💨  I'm a Title\n"
 	p.Title("I'm a Title")
 	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_TitleString(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	want := "I'm a Titlestring"
+	got := p.TitleString("I'm a Titlestring")
+	is.Equal(got, want)
+}
+
+func TestPrinter_TitleStringSymbol(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	// Change the symbol
+	p.SymbolTitle = "💨"
+
+	want := "💨  I'm a Titlestring"
+	got := p.TitleString("I'm a Titlestring")
+	is.Equal(got, want)
 }
