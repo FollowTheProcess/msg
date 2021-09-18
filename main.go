@@ -3,14 +3,20 @@ package main
 import (
 	"fmt"
 
-	"github.com/FollowTheProcess/msg/hello"
+	"github.com/FollowTheProcess/msg/msg"
 )
 
-var Version = "dev"
-
 func main() {
-	message := hello.Hello()
+	printer := msg.Default()
 
-	fmt.Println(message)
-	fmt.Println("Version:", Version)
+	printer.Title("I'm a title")
+	fmt.Println("I'm some text on the next line")
+
+	s := printer.TitleString("I'm a titlestring")
+	fmt.Println(s)
+
+	printer.SymbolTitle = "💨"
+
+	s = printer.TitleString("I'm a titlestring with a symbol")
+	fmt.Println(s)
 }
