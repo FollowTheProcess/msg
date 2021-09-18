@@ -28,9 +28,9 @@ func main() {
 
 	msg.Title("Stuff below here")
 
-	printer.Good("Something good happened")
+	printer.Info("Something happened")
 
-	printer.SymbolGood = "🎉"
+	printer.SymbolInfo = "🔎"
 
-	printer.Good("Something good with a different symbol!")
+	printer.Info("Something happened with a different symbol!")
 }
