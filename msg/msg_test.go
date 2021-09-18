@@ -94,12 +94,34 @@ func TestPrinter_TitleStringSymbol(t *testing.T) {
 	is.Equal(got, want)
 }
 
+func TestPrinter_Titlef(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("\nTitle about: %s\n\n", about)
+	p.Titlef("Title about: %s", about)
+	is.Equal(rb.String(), want)
+}
+
 func TestPrinter_Warn(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
 
 	want := fmt.Sprintf("%s  I'm a Warning\n", defaultWarnSymbol)
 	p.Warn("I'm a Warning")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_Warnf(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Warning you about: %s\n", defaultWarnSymbol, about)
+	p.Warnf("Warning you about: %s", about)
 	is.Equal(rb.String(), want)
 }
 
@@ -178,6 +200,17 @@ func TestPrinter_FailStringSymbol(t *testing.T) {
 	is.Equal(got, want)
 }
 
+func TestPrinter_Failf(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Error: %s\n", defaultFailSymbol, about)
+	p.Failf("Error: %s", about)
+	is.Equal(rb.String(), want)
+}
+
 func TestPrinter_Good(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
@@ -218,6 +251,17 @@ func TestPrinter_GoodStringSymbol(t *testing.T) {
 	want := "🎉  I'm a Goodstring"
 	got := p.GoodString("I'm a Goodstring")
 	is.Equal(got, want)
+}
+
+func TestPrinter_Goodf(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Success: %s\n", defaultGoodSymbol, about)
+	p.Goodf("Success: %s", about)
+	is.Equal(rb.String(), want)
 }
 
 func TestPrinter_Info(t *testing.T) {
@@ -262,11 +306,42 @@ func TestPrinter_InfoStringSymbol(t *testing.T) {
 	is.Equal(got, want)
 }
 
+func TestPrinter_Infof(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("%s  Info: %s\n", defaultInfoSymbol, about)
+	p.Infof("Info: %s", about)
+	is.Equal(rb.String(), want)
+}
+
 func TestPrinter_Text(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
 
 	want := fmt.Sprintln("I'm some normal text")
 	p.Text("I'm some normal text")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_TextString(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	want := "I'm some normal text"
+	got := p.TextString("I'm some normal text")
+	is.Equal(got, want)
+}
+
+func TestPrinter_Textf(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	about := "something"
+
+	want := fmt.Sprintf("Some text about: %s\n", about)
+	p.Textf("Some text about: %s", about)
 	is.Equal(rb.String(), want)
 }
