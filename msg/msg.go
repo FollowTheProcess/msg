@@ -131,8 +131,8 @@ func (p *Printer) WarnString(text string) string {
 
 // Title prints a Title message using the default printer
 //
-// A Title is distinguishable from most other constructs in msg as it will
-// always have newlines before and after it
+// A Title is distinguishable from all other constructs in msg as it will
+// has 1 newline before and 2 newlines after it
 func Title(text string) {
 	p := newDefault()
 	p.Title(text)
