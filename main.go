@@ -26,11 +26,10 @@ func main() {
 		Out:         os.Stdout,
 	}
 
-	msg.Title("Stuff below here")
+	name := "Tom"
 
-	printer.Info("Something happened")
+	printer.Title("Some stuff below")
 
-	printer.SymbolInfo = "🔎"
-
-	printer.Info("Something happened with a different symbol!")
+	msg.Warnf("Warning you about %s", name)
+	msg.Textf("I'm some text below the warning about %s", name)
 }

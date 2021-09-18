@@ -77,7 +77,7 @@ func newDefault() *Printer {
 	}
 }
 
-// Title prints a Title message using the configured printer
+// Title prints a Title message
 //
 // A Title is distinguishable from all other constructs in msg as it will
 // has 1 newline before and 2 newlines after it
@@ -96,6 +96,12 @@ func (p *Printer) Title(text string) {
 	title.Fprint(p.Out, text)
 }
 
+// Titlef prints a formatted warning message
+func (p *Printer) Titlef(format string, a ...interface{}) {
+	text := fmt.Sprintf(format, a...)
+	p.Title(text)
+}
+
 // TitleString is like Title but it returns a string rather than printing it
 //
 // The returned string will have all it's leading and trailing whitespace/newlines trimmed
@@ -110,7 +116,7 @@ func (p *Printer) TitleString(text string) string {
 	return title.Sprint(text)
 }
 
-// Warn prints a Warning message using the configured printer
+// Warn prints a Warning message
 func (p *Printer) Warn(text string) {
 	warn := color.New(p.ColorWarn)
 
@@ -118,6 +124,12 @@ func (p *Printer) Warn(text string) {
 		text = fmt.Sprintf("%s  %s", p.SymbolWarn, text)
 	}
 	warn.Fprintln(p.Out, text)
+}
+
+// Warnf prints a formatted warning message
+func (p *Printer) Warnf(format string, a ...interface{}) {
+	text := fmt.Sprintf(format, a...)
+	p.Warn(text)
 }
 
 // WarnString is like Warn but returns a string rather than printing it
@@ -130,7 +142,7 @@ func (p *Printer) WarnString(text string) string {
 	return warn.Sprint(text)
 }
 
-// Fail prints an error message using the configured printer
+// Fail prints an error message
 func (p *Printer) Fail(text string) {
 	fail := color.New(p.ColorFail)
 
@@ -138,6 +150,12 @@ func (p *Printer) Fail(text string) {
 		text = fmt.Sprintf("%s  %s", p.SymbolFail, text)
 	}
 	fail.Fprintln(p.Out, text)
+}
+
+// Failf prints a formatted error message
+func (p *Printer) Failf(format string, a ...interface{}) {
+	text := fmt.Sprintf(format, a...)
+	p.Fail(text)
 }
 
 // FailString is like Fail but returns a string rather than printing it
@@ -150,7 +168,7 @@ func (p *Printer) FailString(text string) string {
 	return fail.Sprint(text)
 }
 
-// Good prints a success message using the configured printer
+// Good prints a success message
 func (p *Printer) Good(text string) {
 	good := color.New(p.ColorGood)
 
@@ -158,6 +176,12 @@ func (p *Printer) Good(text string) {
 		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
 	}
 	good.Fprintln(p.Out, text)
+}
+
+// Goodf prints a formatted success message
+func (p *Printer) Goodf(format string, a ...interface{}) {
+	text := fmt.Sprintf(format, a...)
+	p.Good(text)
 }
 
 // GoodString is like Good but returns a string rather than printing it
@@ -170,7 +194,7 @@ func (p *Printer) GoodString(text string) string {
 	return good.Sprint(text)
 }
 
-// Info prints an information message using the configured printer
+// Info prints an information message
 func (p *Printer) Info(text string) {
 	info := color.New(p.ColorInfo)
 
@@ -190,6 +214,30 @@ func (p *Printer) InfoString(text string) string {
 	return info.Sprint(text)
 }
 
+// Infof prints a formatted information message
+func (p *Printer) Infof(format string, a ...interface{}) {
+	text := fmt.Sprintf(format, a...)
+	p.Info(text)
+}
+
+// Text prints a normal, uncoloured message
+// you could argue we don't need this as all is does is call fmt.Fprintln but we're here now
+func (p *Printer) Text(text string) {
+	fmt.Fprintln(p.Out, text)
+}
+
+// TextString is like Text but returns a string rather than printing it
+func (p *Printer) TextString(text string) string {
+	return fmt.Sprint(text)
+}
+
+// Textf prints a formatted normal message
+// a newline is automatically appended to the end of 'format' so
+// you don't have to
+func (p *Printer) Textf(format string, a ...interface{}) {
+	fmt.Fprintf(p.Out, format+"\n", a...)
+}
+
 // Title prints a Title message using the default printer
 //
 // A Title is distinguishable from all other constructs in msg as it will
@@ -199,10 +247,22 @@ func Title(text string) {
 	p.Title(text)
 }
 
+// Titlef prints a formatted Title message using the default printer
+func Titlef(format string, a ...interface{}) {
+	p := newDefault()
+	p.Titlef(format, a...)
+}
+
 // Warn prints a warning message using the default printer
 func Warn(text string) {
 	p := newDefault()
 	p.Warn(text)
+}
+
+// Warnf prints a formatted warning message using the default printer
+func Warnf(format string, a ...interface{}) {
+	p := newDefault()
+	p.Warnf(format, a...)
 }
 
 // Fail prints an error message using the default printer
@@ -211,14 +271,44 @@ func Fail(text string) {
 	p.Fail(text)
 }
 
+// Failf prints a formatted error message using the default printer
+func Failf(format string, a ...interface{}) {
+	p := newDefault()
+	p.Failf(format, a...)
+}
+
 // Good prints a success message using the default printer
 func Good(text string) {
 	p := newDefault()
 	p.Good(text)
 }
 
+// Goodf prints a formatted success message using the default printer
+func Goodf(format string, a ...interface{}) {
+	p := newDefault()
+	p.Goodf(format, a...)
+}
+
 // Info prints an information message using the default printer
 func Info(text string) {
 	p := newDefault()
 	p.Info(text)
+}
+
+// Infof prints a formatted information message using the default printer
+func Infof(format string, a ...interface{}) {
+	p := newDefault()
+	p.Infof(format, a...)
+}
+
+// Text prints a normal, uncoloured message using the default printer
+func Text(text string) {
+	p := newDefault()
+	p.Text(text)
+}
+
+// Textf prints a formatted normal, uncoloured message using the default printer
+func Textf(format string, a ...interface{}) {
+	p := newDefault()
+	p.Textf(format, a...)
 }
