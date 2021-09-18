@@ -27,17 +27,19 @@ func main() {
 		Out:         os.Stdout,
 	}
 
-	printer.Title("I'm a title")
-	fmt.Println("I'm some text on the next line")
+	msg.Title("Stuff below here")
 
-	s := printer.TitleString("I'm a titlestring")
-	fmt.Println(s)
+	printer.Warn("I'm a warning")
+	fmt.Println("I'm under the warning")
 
-	printer.SymbolTitle = "💨"
+	// Remove the symbol
+	printer.SymbolWarn = ""
+	printer.Warn("I'm a warning without a symbol")
+	fmt.Println("I'm under this warning")
 
-	s = printer.TitleString("I'm a titlestring with a symbol")
-	fmt.Println(s)
+	printer.SymbolWarn = "⛔️"
+	printer.Warn("I'm a warning with this symbol now")
+	fmt.Println("I'm under yet another warning")
 
-	// If you just want to use the default
-	msg.Title("I'm the default title")
+	msg.Warn("Default warning")
 }
