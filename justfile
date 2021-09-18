@@ -38,7 +38,7 @@ cover:
 # Remove build artifacts and other project clutter
 clean:
     go clean ./...
-    rm -rf {{ project_name }} {{ coverage_data }} {{ coverage_html }} {{ goreleaser_dist }}
+    rm -rf {{ coverage_data }} {{ coverage_html }} {{ goreleaser_dist }}
 
 # Run unit tests and linting in one go
 check: test lint
