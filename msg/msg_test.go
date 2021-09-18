@@ -135,3 +135,45 @@ func TestPrinter_WarnStringSymbol(t *testing.T) {
 	got := p.WarnString("I'm a Warnstring")
 	is.Equal(got, want)
 }
+
+func TestPrinter_Fail(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	want := fmt.Sprintf("%s  I'm a Failure\n", defaultFailSymbol)
+	p.Fail("I'm a Failure")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_FailSymbol(t *testing.T) {
+	is := is.New(t)
+	rb, p := setup()
+
+	// Change the symbol
+	p.SymbolFail = "🤬"
+
+	want := "🤬  I'm a Failure\n"
+	p.Fail("I'm a Failure")
+	is.Equal(rb.String(), want)
+}
+
+func TestPrinter_FailString(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	want := fmt.Sprintf("%s  I'm a Failstring", defaultFailSymbol)
+	got := p.FailString("I'm a Failstring")
+	is.Equal(got, want)
+}
+
+func TestPrinter_FailStringSymbol(t *testing.T) {
+	is := is.New(t)
+	_, p := setup()
+
+	// Change the symbol
+	p.SymbolFail = "🤬"
+
+	want := "🤬  I'm a Failstring"
+	got := p.FailString("I'm a Failstring")
+	is.Equal(got, want)
+}
