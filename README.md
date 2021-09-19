@@ -4,6 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/FollowTheProcess/msg)](https://goreportcard.com/report/github.com/FollowTheProcess/msg)
 [![GitHub](https://img.shields.io/github/v/release/FollowTheProcess/msg?logo=github&sort=semver)](https://github.com/FollowTheProcess/msg)
 [![CI](https://github.com/FollowTheProcess/msg/workflows/CI/badge.svg)](https://github.com/FollowTheProcess/msg/actions?query=workflow%3ACI)
+[![Go Reference](https://pkg.go.dev/badge/github.com/FollowTheProcess/msg.svg)](https://pkg.go.dev/github.com/FollowTheProcess/msg)
 
 :rocket: A lightweight console printing toolkit for Go CLIs.
 
