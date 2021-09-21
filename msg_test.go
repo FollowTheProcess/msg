@@ -16,7 +16,7 @@ import (
 // testPrinter returns a default symbols and colors but configured to output to 'out'
 // each test should set up their own 'out' from which to read the printed output
 func testPrinter(out io.Writer) *Printer {
-	printer := newDefault()
+	printer := Default()
 	printer.Out = out
 	return printer
 }
@@ -47,7 +47,7 @@ func TestNewDefault(t *testing.T) {
 		Out:         os.Stdout,
 	}
 
-	got := newDefault()
+	got := Default()
 
 	is.Equal(got, want)
 }

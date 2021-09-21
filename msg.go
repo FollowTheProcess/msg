@@ -60,8 +60,9 @@ type Printer struct {
 	Out io.Writer
 }
 
-// newDefault constructs and returns a default symbols and colors with sensible colors and symbols
-func newDefault() *Printer {
+// Default constructs and returns a default Printer with sensible colors and symbols
+// configured to print to os.Stdout
+func Default() *Printer {
 	return &Printer{
 		SymbolInfo:  defaultInfoSymbol,
 		SymbolTitle: defaultTitleSymbol,
@@ -278,144 +279,144 @@ func (p *Printer) Stextf(format string, a ...interface{}) string {
 // A Title is distinguishable from all other constructs in msg as it will
 // has 1 newline before and 2 newlines after it
 func Title(text string) {
-	p := newDefault()
+	p := Default()
 	p.Title(text)
 }
 
 // Titlef prints a formatted Title message using the default symbols and colors
 func Titlef(format string, a ...interface{}) {
-	p := newDefault()
+	p := Default()
 	p.Titlef(format, a...)
 }
 
 // Stitle returns a Title string using the default symbols and colors
 func Stitle(text string) string {
-	p := newDefault()
+	p := Default()
 	return p.Stitle(text)
 }
 
 // Stitlef returns a formatted Title string using the default symbols and colors
 func Stitlef(format string, a ...interface{}) string {
-	p := newDefault()
+	p := Default()
 	return p.Stitlef(format, a...)
 }
 
 // Warn prints a warning message using the default symbols and colors
 func Warn(text string) {
-	p := newDefault()
+	p := Default()
 	p.Warn(text)
 }
 
 // Warnf prints a formatted warning message using the default symbols and colors
 func Warnf(format string, a ...interface{}) {
-	p := newDefault()
+	p := Default()
 	p.Warnf(format, a...)
 }
 
 // Swarn returns a warning string using the default symbols and colors
 func Swarn(text string) string {
-	p := newDefault()
+	p := Default()
 	return p.Swarn(text)
 }
 
 // Swarnf returns a formatted warning string using the default symbols and colors
 func Swarnf(format string, a ...interface{}) string {
-	p := newDefault()
+	p := Default()
 	return p.Swarnf(format, a...)
 }
 
 // Fail prints an error message using the default symbols and colors
 func Fail(text string) {
-	p := newDefault()
+	p := Default()
 	p.Fail(text)
 }
 
 // Failf prints a formatted error message using the default symbols and colors
 func Failf(format string, a ...interface{}) {
-	p := newDefault()
+	p := Default()
 	p.Failf(format, a...)
 }
 
 // Sfail returns an error message using the default symbols and colors
 func Sfail(text string) string {
-	p := newDefault()
+	p := Default()
 	return p.Sfail(text)
 }
 
 // Sfailf returns a formatted error message using the default symbols and colors
 func Sfailf(format string, a ...interface{}) string {
-	p := newDefault()
+	p := Default()
 	return p.Sfailf(format, a...)
 }
 
 // Good prints a success message using the default symbols and colors
 func Good(text string) {
-	p := newDefault()
+	p := Default()
 	p.Good(text)
 }
 
 // Goodf prints a formatted success message using the default symbols and colors
 func Goodf(format string, a ...interface{}) {
-	p := newDefault()
+	p := Default()
 	p.Goodf(format, a...)
 }
 
 // Sgood returns a success message using the default symbols and colors
 func Sgood(text string) string {
-	p := newDefault()
+	p := Default()
 	return p.Sgood(text)
 }
 
 // Sgoodf returns a formatted success message using the default symbols and colors
 func Sgoodf(format string, a ...interface{}) string {
-	p := newDefault()
+	p := Default()
 	return p.Sgoodf(format, a...)
 }
 
 // Info prints an information message using the default symbols and colors
 func Info(text string) {
-	p := newDefault()
+	p := Default()
 	p.Info(text)
 }
 
 // Infof prints a formatted information message using the default symbols and colors
 func Infof(format string, a ...interface{}) {
-	p := newDefault()
+	p := Default()
 	p.Infof(format, a...)
 }
 
 // Sinfo returns an information message using the default symbols and colors
 func Sinfo(text string) string {
-	p := newDefault()
+	p := Default()
 	return p.Sinfo(text)
 }
 
 // Sinfof returns a formatted information message using the default symbols and colors
 func Sinfof(format string, a ...interface{}) string {
-	p := newDefault()
+	p := Default()
 	return p.Sinfof(format, a...)
 }
 
 // Text prints a normal, uncoloured message
 func Text(text string) {
-	p := newDefault()
+	p := Default()
 	p.Text(text)
 }
 
 // Textf prints a formatted normal, uncoloured message
 func Textf(format string, a ...interface{}) {
-	p := newDefault()
+	p := Default()
 	p.Textf(format, a...)
 }
 
 // Stext returns a normal, uncoloured message
 func Stext(text string) string {
-	p := newDefault()
+	p := Default()
 	return p.Stext(text)
 }
 
 // Stextf returns a formatted normal, uncoloured message
 func Stextf(format string, a ...interface{}) string {
-	p := newDefault()
+	p := Default()
 	return p.Stextf(format, a...)
 }
