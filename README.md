@@ -1,3 +1,5 @@
+![logo](img/logo.png)
+
 # msg
 
 [![License](https://img.shields.io/github/license/FollowTheProcess/msg)](https://github.com/FollowTheProcess/msg)
