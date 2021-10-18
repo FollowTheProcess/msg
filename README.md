@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./img/logo.png" alt="logo" width=50% height=50%>
+<img src="https://github.com/FollowTheProcess/msg/raw/main/img/logo.png" alt="logo" width=50% height=50%>
 </p>
 
 # msg
