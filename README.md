@@ -1,4 +1,6 @@
-![logo](img/logo.png)
+<p align="center">
+<img src="./img/logo.png" alt="logo" width=50% height=50%>
+</p>
 
 # msg
 
