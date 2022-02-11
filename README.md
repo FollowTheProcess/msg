@@ -1,7 +1,3 @@
-<p align="center">
-<img src="https://github.com/FollowTheProcess/msg/raw/main/img/logo.png" alt="logo" width=50% height=50%>
-</p>
-
 # msg
 
 [![License](https://img.shields.io/github/license/FollowTheProcess/msg)](https://github.com/FollowTheProcess/msg)
