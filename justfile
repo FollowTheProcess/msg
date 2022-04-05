@@ -15,7 +15,7 @@ tidy:
 
 # Run go fmt on all project files
 fmt:
-    gofumpt -extra -s -w .
+    go fmt ./...
 
 # Run all project unit tests
 test: fmt
