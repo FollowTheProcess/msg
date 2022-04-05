@@ -14,7 +14,7 @@ import (
 )
 
 // testPrinter returns a default symbols and colors but configured to output to 'out'
-// each test should set up their own 'out' from which to read the printed output
+// each test should set up their own 'out' from which to read the printed output.
 func testPrinter(out io.Writer) *Printer {
 	printer := Default()
 	printer.Out = out
@@ -22,7 +22,7 @@ func testPrinter(out io.Writer) *Printer {
 }
 
 // setup returns a testPrinter configured to talk to a bytes.Buffer
-// and the pointer to the bytes.Buffer itself to be read from
+// and the pointer to the bytes.Buffer itself to be read from.
 func setup() (*bytes.Buffer, *Printer) {
 	rb := bytes.NewBuffer(nil)
 	p := testPrinter(rb)
