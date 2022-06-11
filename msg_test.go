@@ -184,7 +184,7 @@ func TestPrinter_Fail(t *testing.T) {
 	is := is.New(t)
 	rb, p := setup()
 
-	want := fmt.Sprintf("%s  I'm a Failure\n", defaultFailSymbol)
+	want := fmt.Sprintf("%s  Error: I'm a Failure\n", defaultFailSymbol)
 	p.Fail("I'm a Failure")
 	is.Equal(rb.String(), want)
 }
@@ -196,7 +196,7 @@ func TestPrinter_FailSymbol(t *testing.T) {
 	// Change the symbol
 	p.SymbolFail = "🤬"
 
-	want := "🤬  I'm a Failure\n"
+	want := "🤬  Error: I'm a Failure\n"
 	p.Fail("I'm a Failure")
 	is.Equal(rb.String(), want)
 }
@@ -205,7 +205,7 @@ func TestPrinter_Sfail(t *testing.T) {
 	is := is.New(t)
 	_, p := setup()
 
-	want := fmt.Sprintf("%s  I'm a Sfail", defaultFailSymbol)
+	want := fmt.Sprintf("%s  Error: I'm a Sfail", defaultFailSymbol)
 	got := p.Sfail("I'm a Sfail")
 	is.Equal(got, want)
 }
@@ -217,7 +217,7 @@ func TestPrinter_SfailSymbol(t *testing.T) {
 	// Change the symbol
 	p.SymbolFail = "🤬"
 
-	want := "🤬  I'm a Sfail"
+	want := "🤬  Error: I'm a Sfail"
 	got := p.Sfail("I'm a Sfail")
 	is.Equal(got, want)
 }
@@ -228,8 +228,8 @@ func TestPrinter_Sfailf(t *testing.T) {
 
 	about := "something"
 
-	want := fmt.Sprintf("%s  Error about: %s", defaultFailSymbol, about)
-	got := p.Sfailf("Error about: %s", about)
+	want := fmt.Sprintf("%s  Error: Something about: %s", defaultFailSymbol, about)
+	got := p.Sfailf("Something about: %s", about)
 	is.Equal(got, want)
 }
 
@@ -239,8 +239,8 @@ func TestPrinter_Failf(t *testing.T) {
 
 	about := "something"
 
-	want := fmt.Sprintf("%s  Error: %s\n", defaultFailSymbol, about)
-	p.Failf("Error: %s", about)
+	want := fmt.Sprintf("%s  Error: Something: %s\n", defaultFailSymbol, about)
+	p.Failf("Something: %s", about)
 	is.Equal(rb.String(), want)
 }
 
