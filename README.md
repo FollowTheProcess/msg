@@ -16,13 +16,13 @@ Who else is bored with boring grey text in CLIs? :raising_hand:
 
 We all have fancy terminals, utf-8 is everywhere, no one is still using the stock windows command prompt any more... are they? :raised_eyebrow:
 
-When writing [pytoil] I discovered [ines/wasabi] for this exact purpose and absolutely loved it immediately:
+For python CLIs I discovered [ines/wasabi] for this exact purpose and absolutely loved it immediately:
 
 * No dependencies outside the python stdlib
 * Configurable if you want but the defaults look great
 * Super easy to use and doesn't get in the way of what your CLI is trying to do
 
-Then I started learning go and writing some CLIs I kept wishing I had it there too.
+Then I started learning go and writing some CLIs I kept wishing I had it here too.
 
 So here it is (mostly) :tada:
 
@@ -217,7 +217,6 @@ No hard and fast rules here but a few guidelines:
 
 This package was created with [cookiecutter](https://github.com/cookiecutter/cookiecutter) and the [FollowTheProcess/go_cookie](https://github.com/FollowTheProcess/go_cookie) project template.
 
-[pytoil]: https://github.com/FollowTheProcess/pytoil
 [ines/wasabi]: https://github.com/ines/wasabi
 [fatih/color]: https://github.com/fatih/color
 [golangci-lint]: https://golangci-lint.run
