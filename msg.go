@@ -138,12 +138,15 @@ func (p *Printer) Swarnf(format string, a ...interface{}) string {
 
 // Fail prints an error message.
 func (p *Printer) Fail(text string) {
-	fail := color.New(p.ColorFail)
+	failStyle := color.New(p.ColorFail).Add(color.Bold)
+	messageStyle := color.New(color.FgHiWhite, color.Bold)
 
-	if p.SymbolWarn != "" {
-		text = fmt.Sprintf("%s  %s", p.SymbolFail, text)
+	text = fmt.Sprintf("%s: %s", failStyle.Sprint("Error"), messageStyle.Sprint(text))
+
+	if p.SymbolFail != "" {
+		text = fmt.Sprintf("%s  %s", failStyle.Sprint(p.SymbolFail), text)
 	}
-	fail.Fprintln(p.Out, text)
+	fmt.Fprintln(p.Out, text)
 }
 
 // Failf prints a formatted error message.
@@ -154,12 +157,15 @@ func (p *Printer) Failf(format string, a ...interface{}) {
 
 // Sfail is like Fail but returns a string rather than printing it.
 func (p *Printer) Sfail(text string) string {
-	fail := color.New(p.ColorFail)
+	failStyle := color.New(p.ColorFail).Add(color.Bold)
+	messageStyle := color.New(color.FgHiWhite, color.Bold)
 
-	if p.SymbolWarn != "" {
-		text = fmt.Sprintf("%s  %s", p.SymbolFail, text)
+	text = fmt.Sprintf("%s: %s", failStyle.Sprint("Error"), messageStyle.Sprint(text))
+
+	if p.SymbolFail != "" {
+		text = fmt.Sprintf("%s  %s", failStyle.Sprint(p.SymbolFail), text)
 	}
-	return fail.Sprint(text)
+	return text
 }
 
 // Sfailf returns a formatted error string.
