@@ -1,3 +1,14 @@
+// Package msg is a simple, easy to use console printing toolkit for Go CLIs rendering pretty
+// formatted output with colours and symbols specific to the particular message type:
+//
+//   - Info: For general user information and progress updates
+//   - Title: Separation between sections of output
+//   - Warn: User warnings
+//   - Good: Report success
+//   - Fail: Report failure (defaults to Stderr)
+//
+// The symbols and colours used all have sensible defaults but are completely configurable so you
+// can tweak the output however you like!
 package msg
 
 import (
