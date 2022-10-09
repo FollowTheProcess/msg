@@ -55,8 +55,8 @@ type Printer struct {
 
 // Default constructs and returns a default Printer with sensible colors and symbols
 // configured to print to os.Stdout.
-func Default() *Printer {
-	return &Printer{
+func Default() Printer {
+	return Printer{
 		SymbolInfo:  defaultInfoSymbol,
 		SymbolTitle: defaultTitleSymbol,
 		SymbolWarn:  defaultWarnSymbol,
@@ -79,7 +79,7 @@ func Default() *Printer {
 //
 // If the Printer has a SymbolTitle, it will be prefixed onto 'text'
 // with 2 spaces separating them.
-func (p *Printer) Title(text string) {
+func (p Printer) Title(text string) {
 	title := color.New(p.ColorTitle, color.Bold)
 	// Title by default has an empty string as a symbol
 	// sort the spacing out if user sets a symbol
@@ -92,7 +92,7 @@ func (p *Printer) Title(text string) {
 }
 
 // Titlef prints a formatted warning message.
-func (p *Printer) Titlef(format string, a ...any) {
+func (p Printer) Titlef(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Title(text)
 }
@@ -101,7 +101,7 @@ func (p *Printer) Titlef(format string, a ...any) {
 //
 // The returned string will have all it's leading and trailing whitespace/newlines trimmed
 // so you have access to the raw string.
-func (p *Printer) Stitle(text string) string {
+func (p Printer) Stitle(text string) string {
 	title := color.New(p.ColorTitle, color.Bold)
 	// Title by default does not have a symbol so if user adds one
 	// make sure the text is adequately spaced
@@ -112,13 +112,13 @@ func (p *Printer) Stitle(text string) string {
 }
 
 // Stitlef returns a formatted title string, stripped of all leading/trailing whitespace.
-func (p *Printer) Stitlef(format string, a ...any) string {
+func (p Printer) Stitlef(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Stitle(text)
 }
 
 // Warn prints a Warning message.
-func (p *Printer) Warn(text string) {
+func (p Printer) Warn(text string) {
 	warn := color.New(p.ColorWarn)
 
 	if p.SymbolWarn != "" {
@@ -128,13 +128,13 @@ func (p *Printer) Warn(text string) {
 }
 
 // Warnf prints a formatted warning message.
-func (p *Printer) Warnf(format string, a ...any) {
+func (p Printer) Warnf(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Warn(text)
 }
 
 // Swarn is like Warn but returns a string rather than printing it.
-func (p *Printer) Swarn(text string) string {
+func (p Printer) Swarn(text string) string {
 	warn := color.New(p.ColorWarn)
 
 	if p.SymbolWarn != "" {
@@ -144,13 +144,13 @@ func (p *Printer) Swarn(text string) string {
 }
 
 // Swarnf returns a formatted warning string.
-func (p *Printer) Swarnf(format string, a ...any) string {
+func (p Printer) Swarnf(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Swarn(text)
 }
 
 // Fail prints an error message to Stderr.
-func (p *Printer) Fail(text string) {
+func (p Printer) Fail(text string) {
 	failStyle := color.New(p.ColorFail).Add(color.Bold)
 	messageStyle := color.New(color.FgHiWhite, color.Bold)
 
@@ -163,13 +163,13 @@ func (p *Printer) Fail(text string) {
 }
 
 // Failf prints a formatted error message to Stderr.
-func (p *Printer) Failf(format string, a ...any) {
+func (p Printer) Failf(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Fail(text)
 }
 
 // Sfail is like Fail but returns a string rather than printing it.
-func (p *Printer) Sfail(text string) string {
+func (p Printer) Sfail(text string) string {
 	failStyle := color.New(p.ColorFail).Add(color.Bold)
 	messageStyle := color.New(color.FgHiWhite, color.Bold)
 
@@ -182,13 +182,13 @@ func (p *Printer) Sfail(text string) string {
 }
 
 // Sfailf returns a formatted error string.
-func (p *Printer) Sfailf(format string, a ...any) string {
+func (p Printer) Sfailf(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Sfail(text)
 }
 
 // Good prints a success message.
-func (p *Printer) Good(text string) {
+func (p Printer) Good(text string) {
 	good := color.New(p.ColorGood)
 
 	if p.SymbolGood != "" {
@@ -198,13 +198,13 @@ func (p *Printer) Good(text string) {
 }
 
 // Goodf prints a formatted success message.
-func (p *Printer) Goodf(format string, a ...any) {
+func (p Printer) Goodf(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Good(text)
 }
 
 // Sgood is like Good but returns a string rather than printing it.
-func (p *Printer) Sgood(text string) string {
+func (p Printer) Sgood(text string) string {
 	good := color.New(p.ColorGood)
 
 	if p.SymbolGood != "" {
@@ -214,13 +214,13 @@ func (p *Printer) Sgood(text string) string {
 }
 
 // Sgoodf returns a formatted success string.
-func (p *Printer) Sgoodf(format string, a ...any) string {
+func (p Printer) Sgoodf(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Sgood(text)
 }
 
 // Info prints an information message.
-func (p *Printer) Info(text string) {
+func (p Printer) Info(text string) {
 	info := color.New(p.ColorInfo)
 
 	if p.SymbolInfo != "" {
@@ -230,13 +230,13 @@ func (p *Printer) Info(text string) {
 }
 
 // Infof prints a formatted information message.
-func (p *Printer) Infof(format string, a ...any) {
+func (p Printer) Infof(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Info(text)
 }
 
 // Sinfo is like Info but returns a string rather than printing it.
-func (p *Printer) Sinfo(text string) string {
+func (p Printer) Sinfo(text string) string {
 	info := color.New(p.ColorInfo)
 
 	if p.SymbolInfo != "" {
@@ -246,31 +246,31 @@ func (p *Printer) Sinfo(text string) string {
 }
 
 // Sinfof returns a formatted info string.
-func (p *Printer) Sinfof(format string, a ...any) string {
+func (p Printer) Sinfof(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Sinfo(text)
 }
 
 // Text prints a normal, uncoloured message
 // you could argue we don't need this as all is does is call fmt.Fprintln but we're here now.
-func (p *Printer) Text(text string) {
+func (p Printer) Text(text string) {
 	fmt.Fprintln(p.Stdout, text)
 }
 
 // Textf prints a formatted normal message
 // a newline is automatically appended to the end of 'format' so
 // you don't have to.
-func (p *Printer) Textf(format string, a ...any) {
+func (p Printer) Textf(format string, a ...any) {
 	fmt.Fprintf(p.Stdout, format+"\n", a...)
 }
 
 // Stext is like Text but returns a string rather than printing it.
-func (p *Printer) Stext(text string) string {
+func (p Printer) Stext(text string) string {
 	return fmt.Sprint(text)
 }
 
 // Stextf returns a normal, non coloured formatted string.
-func (p *Printer) Stextf(format string, a ...any) string {
+func (p Printer) Stextf(format string, a ...any) string {
 	return fmt.Sprintf(format, a...)
 }
 
