@@ -150,8 +150,11 @@ func main() {
         ColorFail:  color.FgRed,
         ColorGood:  color.FgGreen,
 
-        // Mainly used for testing but you can set it if you want
-        Out: os.Stdout,
+        // Every message type other than `Fail` types get printed here
+        Stdout: os.Stdout,
+
+        // Fail message types get printed here
+        Stderr: os.Stderr
     }
 
     // Now your printer is set up, just call the normal methods
@@ -212,10 +215,6 @@ No hard and fast rules here but a few guidelines:
 * If you add a feature, be sure to add tests to cover what you've added
 * If you fix a bug, add a test that would have caught the bug you just squashed
 * Be nice :smiley:
-
-### Credits
-
-This package was created with [cookiecutter](https://github.com/cookiecutter/cookiecutter) and the [FollowTheProcess/go_cookie](https://github.com/FollowTheProcess/go_cookie) project template.
 
 [ines/wasabi]: https://github.com/ines/wasabi
 [fatih/color]: https://github.com/fatih/color
