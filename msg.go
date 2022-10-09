@@ -28,7 +28,8 @@ const (
 // Printer is the primary construct in msg, it allows you to configure the colors
 // and symbols used for each of the printing methods attached to it.
 type Printer struct {
-	Out         io.Writer       // Stdout
+	Stdout      io.Writer       // Stdout
+	Stderr      io.Writer       // Stderr
 	SymbolInfo  string          // Symbol for the Info output
 	SymbolTitle string          // Symbol for the Title output
 	SymbolWarn  string          // Symbol for the Warn output
@@ -55,7 +56,8 @@ func Default() *Printer {
 		ColorWarn:   defaultWarnColor,
 		ColorFail:   defaultFailColor,
 		ColorGood:   defaultGoodColor,
-		Out:         os.Stdout,
+		Stdout:      os.Stdout,
+		Stderr:      os.Stderr,
 	}
 }
 
@@ -75,7 +77,7 @@ func (p *Printer) Title(text string) {
 	} else {
 		text = fmt.Sprintf("\n%s\n\n", text)
 	}
-	title.Fprint(p.Out, text)
+	title.Fprint(p.Stdout, text)
 }
 
 // Titlef prints a formatted warning message.
@@ -111,7 +113,7 @@ func (p *Printer) Warn(text string) {
 	if p.SymbolWarn != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolWarn, text)
 	}
-	warn.Fprintln(p.Out, text)
+	warn.Fprintln(p.Stdout, text)
 }
 
 // Warnf prints a formatted warning message.
@@ -136,7 +138,7 @@ func (p *Printer) Swarnf(format string, a ...interface{}) string {
 	return p.Swarn(text)
 }
 
-// Fail prints an error message.
+// Fail prints an error message to Stderr.
 func (p *Printer) Fail(text string) {
 	failStyle := color.New(p.ColorFail).Add(color.Bold)
 	messageStyle := color.New(color.FgHiWhite, color.Bold)
@@ -146,10 +148,10 @@ func (p *Printer) Fail(text string) {
 	if p.SymbolFail != "" {
 		text = fmt.Sprintf("%s  %s", failStyle.Sprint(p.SymbolFail), text)
 	}
-	fmt.Fprintln(p.Out, text)
+	fmt.Fprintln(p.Stderr, text)
 }
 
-// Failf prints a formatted error message.
+// Failf prints a formatted error message to Stderr.
 func (p *Printer) Failf(format string, a ...interface{}) {
 	text := fmt.Sprintf(format, a...)
 	p.Fail(text)
@@ -181,7 +183,7 @@ func (p *Printer) Good(text string) {
 	if p.SymbolGood != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
 	}
-	good.Fprintln(p.Out, text)
+	good.Fprintln(p.Stdout, text)
 }
 
 // Goodf prints a formatted success message.
@@ -213,7 +215,7 @@ func (p *Printer) Info(text string) {
 	if p.SymbolInfo != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolInfo, text)
 	}
-	info.Fprintln(p.Out, text)
+	info.Fprintln(p.Stdout, text)
 }
 
 // Infof prints a formatted information message.
@@ -241,14 +243,14 @@ func (p *Printer) Sinfof(format string, a ...interface{}) string {
 // Text prints a normal, uncoloured message
 // you could argue we don't need this as all is does is call fmt.Fprintln but we're here now.
 func (p *Printer) Text(text string) {
-	fmt.Fprintln(p.Out, text)
+	fmt.Fprintln(p.Stdout, text)
 }
 
 // Textf prints a formatted normal message
 // a newline is automatically appended to the end of 'format' so
 // you don't have to.
 func (p *Printer) Textf(format string, a ...interface{}) {
-	fmt.Fprintf(p.Out, format+"\n", a...)
+	fmt.Fprintf(p.Stdout, format+"\n", a...)
 }
 
 // Stext is like Text but returns a string rather than printing it.
