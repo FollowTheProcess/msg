@@ -1,3 +1,14 @@
+// Package msg is a simple, easy to use console printing toolkit for Go CLIs rendering pretty
+// formatted output with colours and symbols specific to the particular message type:
+//
+//   - Info: For general user information and progress updates
+//   - Title: Separation between sections of output
+//   - Warn: User warnings
+//   - Good: Report success
+//   - Fail: Report failure (defaults to Stderr)
+//
+// The symbols and colours used all have sensible defaults but are completely configurable so you
+// can tweak the output however you like!
 package msg
 
 import (
@@ -28,7 +39,8 @@ const (
 // Printer is the primary construct in msg, it allows you to configure the colors
 // and symbols used for each of the printing methods attached to it.
 type Printer struct {
-	Out         io.Writer       // Stdout
+	Stdout      io.Writer       // Stdout
+	Stderr      io.Writer       // Stderr
 	SymbolInfo  string          // Symbol for the Info output
 	SymbolTitle string          // Symbol for the Title output
 	SymbolWarn  string          // Symbol for the Warn output
@@ -55,7 +67,8 @@ func Default() *Printer {
 		ColorWarn:   defaultWarnColor,
 		ColorFail:   defaultFailColor,
 		ColorGood:   defaultGoodColor,
-		Out:         os.Stdout,
+		Stdout:      os.Stdout,
+		Stderr:      os.Stderr,
 	}
 }
 
@@ -75,11 +88,11 @@ func (p *Printer) Title(text string) {
 	} else {
 		text = fmt.Sprintf("\n%s\n\n", text)
 	}
-	title.Fprint(p.Out, text)
+	title.Fprint(p.Stdout, text)
 }
 
 // Titlef prints a formatted warning message.
-func (p *Printer) Titlef(format string, a ...interface{}) {
+func (p *Printer) Titlef(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Title(text)
 }
@@ -99,7 +112,7 @@ func (p *Printer) Stitle(text string) string {
 }
 
 // Stitlef returns a formatted title string, stripped of all leading/trailing whitespace.
-func (p *Printer) Stitlef(format string, a ...interface{}) string {
+func (p *Printer) Stitlef(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Stitle(text)
 }
@@ -111,11 +124,11 @@ func (p *Printer) Warn(text string) {
 	if p.SymbolWarn != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolWarn, text)
 	}
-	warn.Fprintln(p.Out, text)
+	warn.Fprintln(p.Stdout, text)
 }
 
 // Warnf prints a formatted warning message.
-func (p *Printer) Warnf(format string, a ...interface{}) {
+func (p *Printer) Warnf(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Warn(text)
 }
@@ -131,12 +144,12 @@ func (p *Printer) Swarn(text string) string {
 }
 
 // Swarnf returns a formatted warning string.
-func (p *Printer) Swarnf(format string, a ...interface{}) string {
+func (p *Printer) Swarnf(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Swarn(text)
 }
 
-// Fail prints an error message.
+// Fail prints an error message to Stderr.
 func (p *Printer) Fail(text string) {
 	failStyle := color.New(p.ColorFail).Add(color.Bold)
 	messageStyle := color.New(color.FgHiWhite, color.Bold)
@@ -146,11 +159,11 @@ func (p *Printer) Fail(text string) {
 	if p.SymbolFail != "" {
 		text = fmt.Sprintf("%s  %s", failStyle.Sprint(p.SymbolFail), text)
 	}
-	fmt.Fprintln(p.Out, text)
+	fmt.Fprintln(p.Stderr, text)
 }
 
-// Failf prints a formatted error message.
-func (p *Printer) Failf(format string, a ...interface{}) {
+// Failf prints a formatted error message to Stderr.
+func (p *Printer) Failf(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Fail(text)
 }
@@ -169,7 +182,7 @@ func (p *Printer) Sfail(text string) string {
 }
 
 // Sfailf returns a formatted error string.
-func (p *Printer) Sfailf(format string, a ...interface{}) string {
+func (p *Printer) Sfailf(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Sfail(text)
 }
@@ -181,11 +194,11 @@ func (p *Printer) Good(text string) {
 	if p.SymbolGood != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolGood, text)
 	}
-	good.Fprintln(p.Out, text)
+	good.Fprintln(p.Stdout, text)
 }
 
 // Goodf prints a formatted success message.
-func (p *Printer) Goodf(format string, a ...interface{}) {
+func (p *Printer) Goodf(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Good(text)
 }
@@ -201,7 +214,7 @@ func (p *Printer) Sgood(text string) string {
 }
 
 // Sgoodf returns a formatted success string.
-func (p *Printer) Sgoodf(format string, a ...interface{}) string {
+func (p *Printer) Sgoodf(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Sgood(text)
 }
@@ -213,11 +226,11 @@ func (p *Printer) Info(text string) {
 	if p.SymbolInfo != "" {
 		text = fmt.Sprintf("%s  %s", p.SymbolInfo, text)
 	}
-	info.Fprintln(p.Out, text)
+	info.Fprintln(p.Stdout, text)
 }
 
 // Infof prints a formatted information message.
-func (p *Printer) Infof(format string, a ...interface{}) {
+func (p *Printer) Infof(format string, a ...any) {
 	text := fmt.Sprintf(format, a...)
 	p.Info(text)
 }
@@ -233,7 +246,7 @@ func (p *Printer) Sinfo(text string) string {
 }
 
 // Sinfof returns a formatted info string.
-func (p *Printer) Sinfof(format string, a ...interface{}) string {
+func (p *Printer) Sinfof(format string, a ...any) string {
 	text := fmt.Sprintf(format, a...)
 	return p.Sinfo(text)
 }
@@ -241,14 +254,14 @@ func (p *Printer) Sinfof(format string, a ...interface{}) string {
 // Text prints a normal, uncoloured message
 // you could argue we don't need this as all is does is call fmt.Fprintln but we're here now.
 func (p *Printer) Text(text string) {
-	fmt.Fprintln(p.Out, text)
+	fmt.Fprintln(p.Stdout, text)
 }
 
 // Textf prints a formatted normal message
 // a newline is automatically appended to the end of 'format' so
 // you don't have to.
-func (p *Printer) Textf(format string, a ...interface{}) {
-	fmt.Fprintf(p.Out, format+"\n", a...)
+func (p *Printer) Textf(format string, a ...any) {
+	fmt.Fprintf(p.Stdout, format+"\n", a...)
 }
 
 // Stext is like Text but returns a string rather than printing it.
@@ -257,7 +270,7 @@ func (p *Printer) Stext(text string) string {
 }
 
 // Stextf returns a normal, non coloured formatted string.
-func (p *Printer) Stextf(format string, a ...interface{}) string {
+func (p *Printer) Stextf(format string, a ...any) string {
 	return fmt.Sprintf(format, a...)
 }
 
@@ -271,7 +284,7 @@ func Title(text string) {
 }
 
 // Titlef prints a formatted Title message using the default symbols and colors.
-func Titlef(format string, a ...interface{}) {
+func Titlef(format string, a ...any) {
 	p := Default()
 	p.Titlef(format, a...)
 }
@@ -283,7 +296,7 @@ func Stitle(text string) string {
 }
 
 // Stitlef returns a formatted Title string using the default symbols and colors.
-func Stitlef(format string, a ...interface{}) string {
+func Stitlef(format string, a ...any) string {
 	p := Default()
 	return p.Stitlef(format, a...)
 }
@@ -295,7 +308,7 @@ func Warn(text string) {
 }
 
 // Warnf prints a formatted warning message using the default symbols and colors.
-func Warnf(format string, a ...interface{}) {
+func Warnf(format string, a ...any) {
 	p := Default()
 	p.Warnf(format, a...)
 }
@@ -307,7 +320,7 @@ func Swarn(text string) string {
 }
 
 // Swarnf returns a formatted warning string using the default symbols and colors.
-func Swarnf(format string, a ...interface{}) string {
+func Swarnf(format string, a ...any) string {
 	p := Default()
 	return p.Swarnf(format, a...)
 }
@@ -319,7 +332,7 @@ func Fail(text string) {
 }
 
 // Failf prints a formatted error message using the default symbols and colors.
-func Failf(format string, a ...interface{}) {
+func Failf(format string, a ...any) {
 	p := Default()
 	p.Failf(format, a...)
 }
@@ -331,7 +344,7 @@ func Sfail(text string) string {
 }
 
 // Sfailf returns a formatted error message using the default symbols and colors.
-func Sfailf(format string, a ...interface{}) string {
+func Sfailf(format string, a ...any) string {
 	p := Default()
 	return p.Sfailf(format, a...)
 }
@@ -343,7 +356,7 @@ func Good(text string) {
 }
 
 // Goodf prints a formatted success message using the default symbols and colors.
-func Goodf(format string, a ...interface{}) {
+func Goodf(format string, a ...any) {
 	p := Default()
 	p.Goodf(format, a...)
 }
@@ -355,7 +368,7 @@ func Sgood(text string) string {
 }
 
 // Sgoodf returns a formatted success message using the default symbols and colors.
-func Sgoodf(format string, a ...interface{}) string {
+func Sgoodf(format string, a ...any) string {
 	p := Default()
 	return p.Sgoodf(format, a...)
 }
@@ -367,7 +380,7 @@ func Info(text string) {
 }
 
 // Infof prints a formatted information message using the default symbols and colors.
-func Infof(format string, a ...interface{}) {
+func Infof(format string, a ...any) {
 	p := Default()
 	p.Infof(format, a...)
 }
@@ -379,7 +392,7 @@ func Sinfo(text string) string {
 }
 
 // Sinfof returns a formatted information message using the default symbols and colors.
-func Sinfof(format string, a ...interface{}) string {
+func Sinfof(format string, a ...any) string {
 	p := Default()
 	return p.Sinfof(format, a...)
 }
@@ -391,7 +404,7 @@ func Text(text string) {
 }
 
 // Textf prints a formatted normal, uncoloured message.
-func Textf(format string, a ...interface{}) {
+func Textf(format string, a ...any) {
 	p := Default()
 	p.Textf(format, a...)
 }
@@ -403,7 +416,7 @@ func Stext(text string) string {
 }
 
 // Stextf returns a formatted normal, uncoloured message.
-func Stextf(format string, a ...interface{}) string {
+func Stextf(format string, a ...any) string {
 	p := Default()
 	return p.Stextf(format, a...)
 }

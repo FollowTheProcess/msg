@@ -15,19 +15,20 @@ import (
 
 // testPrinter returns a default symbols and colors but configured to output to 'out'
 // each test should set up their own 'out' from which to read the printed output.
-func testPrinter(out io.Writer) *Printer {
+func testPrinter(stdout io.Writer, stderr io.Writer) *Printer {
 	printer := Default()
-	printer.Out = out
+	printer.Stdout = stdout
+	printer.Stderr = stderr
 	return printer
 }
 
 // setup returns a testPrinter configured to talk to a bytes.Buffer
 // and the pointer to the bytes.Buffer itself to be read from.
-func setup() (*bytes.Buffer, *Printer) {
-	rb := bytes.NewBuffer(nil)
-	p := testPrinter(rb)
-
-	return rb, p
+func setup() (stdout, stderr *bytes.Buffer, printer *Printer) {
+	stdout = bytes.NewBuffer(nil)
+	stderr = bytes.NewBuffer(nil)
+	printer = testPrinter(stdout, stderr)
+	return
 }
 
 func TestNewDefault(t *testing.T) {
@@ -44,7 +45,8 @@ func TestNewDefault(t *testing.T) {
 		ColorWarn:   defaultWarnColor,
 		ColorFail:   defaultFailColor,
 		ColorGood:   defaultGoodColor,
-		Out:         os.Stdout,
+		Stdout:      os.Stdout,
+		Stderr:      os.Stderr,
 	}
 
 	got := Default()
@@ -54,28 +56,28 @@ func TestNewDefault(t *testing.T) {
 
 func TestPrinter_Title(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	want := "\nI'm a Title\n\n"
 	p.Title("I'm a Title")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_TitleSymbol(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	// Add a symbol
 	p.SymbolTitle = "💨"
 
 	want := "\n💨  I'm a Title\n\n"
 	p.Title("I'm a Title")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Stitle(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	want := "I'm a Stitle"
 	got := p.Stitle("I'm a Stitle")
@@ -84,7 +86,7 @@ func TestPrinter_Stitle(t *testing.T) {
 
 func TestPrinter_StitleSymbol(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	// Change the symbol
 	p.SymbolTitle = "💨"
@@ -96,18 +98,18 @@ func TestPrinter_StitleSymbol(t *testing.T) {
 
 func TestPrinter_Titlef(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	about := "something"
 
 	want := fmt.Sprintf("\nTitle about: %s\n\n", about)
 	p.Titlef("Title about: %s", about)
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Stitlef(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	about := "something"
 
@@ -118,39 +120,39 @@ func TestPrinter_Stitlef(t *testing.T) {
 
 func TestPrinter_Warn(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	want := fmt.Sprintf("%s  I'm a Warning\n", defaultWarnSymbol)
 	p.Warn("I'm a Warning")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Warnf(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	about := "something"
 
 	want := fmt.Sprintf("%s  Warning you about: %s\n", defaultWarnSymbol, about)
 	p.Warnf("Warning you about: %s", about)
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_WarnSymbol(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	// Change the symbol
 	p.SymbolWarn = "☢️"
 
 	want := "☢️  I'm a Warning\n"
 	p.Warn("I'm a Warning")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Swarn(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	want := fmt.Sprintf("%s  I'm a Swarn", defaultWarnSymbol)
 	got := p.Swarn("I'm a Swarn")
@@ -159,7 +161,7 @@ func TestPrinter_Swarn(t *testing.T) {
 
 func TestPrinter_Swarnf(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	about := "something"
 
@@ -170,7 +172,7 @@ func TestPrinter_Swarnf(t *testing.T) {
 
 func TestPrinter_SwarnSymbol(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	// Change the symbol
 	p.SymbolWarn = "☢️"
@@ -182,28 +184,28 @@ func TestPrinter_SwarnSymbol(t *testing.T) {
 
 func TestPrinter_Fail(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	_, stderr, p := setup()
 
 	want := fmt.Sprintf("%s  Error: I'm a Failure\n", defaultFailSymbol)
 	p.Fail("I'm a Failure")
-	is.Equal(rb.String(), want)
+	is.Equal(stderr.String(), want)
 }
 
 func TestPrinter_FailSymbol(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	_, stderr, p := setup()
 
 	// Change the symbol
 	p.SymbolFail = "🤬"
 
 	want := "🤬  Error: I'm a Failure\n"
 	p.Fail("I'm a Failure")
-	is.Equal(rb.String(), want)
+	is.Equal(stderr.String(), want)
 }
 
 func TestPrinter_Sfail(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	want := fmt.Sprintf("%s  Error: I'm a Sfail", defaultFailSymbol)
 	got := p.Sfail("I'm a Sfail")
@@ -212,7 +214,7 @@ func TestPrinter_Sfail(t *testing.T) {
 
 func TestPrinter_SfailSymbol(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	// Change the symbol
 	p.SymbolFail = "🤬"
@@ -224,7 +226,7 @@ func TestPrinter_SfailSymbol(t *testing.T) {
 
 func TestPrinter_Sfailf(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	about := "something"
 
@@ -235,39 +237,39 @@ func TestPrinter_Sfailf(t *testing.T) {
 
 func TestPrinter_Failf(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	_, stderr, p := setup()
 
 	about := "something"
 
 	want := fmt.Sprintf("%s  Error: Something: %s\n", defaultFailSymbol, about)
 	p.Failf("Something: %s", about)
-	is.Equal(rb.String(), want)
+	is.Equal(stderr.String(), want)
 }
 
 func TestPrinter_Good(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	want := fmt.Sprintf("%s  I'm a Success\n", defaultGoodSymbol)
 	p.Good("I'm a Success")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_GoodSymbol(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	// Change the symbol
 	p.SymbolGood = "🎉"
 
 	want := "🎉  I'm a Success\n"
 	p.Good("I'm a Success")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Sgood(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	want := fmt.Sprintf("%s  I'm a Sgood", defaultGoodSymbol)
 	got := p.Sgood("I'm a Sgood")
@@ -276,7 +278,7 @@ func TestPrinter_Sgood(t *testing.T) {
 
 func TestPrinter_SgoodSymbol(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	// Change the symbol
 	p.SymbolGood = "🎉"
@@ -288,18 +290,18 @@ func TestPrinter_SgoodSymbol(t *testing.T) {
 
 func TestPrinter_Goodf(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	about := "something"
 
 	want := fmt.Sprintf("%s  Success: %s\n", defaultGoodSymbol, about)
 	p.Goodf("Success: %s", about)
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Sgoodf(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	about := "something"
 
@@ -310,28 +312,28 @@ func TestPrinter_Sgoodf(t *testing.T) {
 
 func TestPrinter_Info(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	want := fmt.Sprintf("%s  I'm some Info\n", defaultInfoSymbol)
 	p.Info("I'm some Info")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_InfoSymbol(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	// Change the symbol
 	p.SymbolInfo = "🔎"
 
 	want := "🔎  I'm some Info\n"
 	p.Info("I'm some Info")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Sinfo(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	want := fmt.Sprintf("%s  I'm some Info", defaultInfoSymbol)
 	got := p.Sinfo("I'm some Info")
@@ -340,7 +342,7 @@ func TestPrinter_Sinfo(t *testing.T) {
 
 func TestPrinter_SinfoSymbol(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	// Change the symbol
 	p.SymbolInfo = "🔎"
@@ -352,18 +354,18 @@ func TestPrinter_SinfoSymbol(t *testing.T) {
 
 func TestPrinter_Infof(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	about := "something"
 
 	want := fmt.Sprintf("%s  Info: %s\n", defaultInfoSymbol, about)
 	p.Infof("Info: %s", about)
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Sinfof(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	about := "something"
 
@@ -374,16 +376,16 @@ func TestPrinter_Sinfof(t *testing.T) {
 
 func TestPrinter_Text(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	want := fmt.Sprintln("I'm some normal text")
 	p.Text("I'm some normal text")
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Stext(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	want := "I'm some normal text"
 	got := p.Stext("I'm some normal text")
@@ -392,18 +394,18 @@ func TestPrinter_Stext(t *testing.T) {
 
 func TestPrinter_Textf(t *testing.T) {
 	is := is.New(t)
-	rb, p := setup()
+	stdout, _, p := setup()
 
 	about := "something"
 
 	want := fmt.Sprintf("Some text about: %s\n", about)
 	p.Textf("Some text about: %s", about)
-	is.Equal(rb.String(), want)
+	is.Equal(stdout.String(), want)
 }
 
 func TestPrinter_Stextf(t *testing.T) {
 	is := is.New(t)
-	_, p := setup()
+	_, _, p := setup()
 
 	about := "something"
 
