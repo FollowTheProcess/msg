@@ -54,7 +54,7 @@ type Printer struct {
 }
 
 // Default constructs and returns a default Printer with sensible colors and symbols
-// configured to print to os.Stdout.
+// configured to print to os.Stdout and send error output to os.Stderr.
 func Default() Printer {
 	return Printer{
 		SymbolInfo:  defaultInfoSymbol,
