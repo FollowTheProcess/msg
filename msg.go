@@ -95,3 +95,25 @@ func Finfo(w io.Writer, format string, a ...any) {
 
 	fmt.Fprintf(w, "%s: %s\n", info.Sprint(statusInfo), message.Sprintf(format, a...))
 }
+
+// Title prints a title message to stdout.
+//
+// A title message differs from every other message type in msg as it
+// has 1 leading newline and 2 trailing newlines to create separation between
+// the sections it is differentiating in your CLI.
+//
+//	msg.Title("Some section")
+func Title(format string, a ...any) {
+	Ftitle(os.Stdout, format, a...)
+}
+
+// Ftitle prints a title message to w.
+//
+// A title message differs from every other message type in msg as it
+// has 1 leading newline and 2 trailing newlines to create separation between
+// the sections it is differentiating in your CLI.
+func Ftitle(w io.Writer, format string, a ...any) {
+	title := color.New(colorTitle, color.Bold)
+
+	fmt.Fprintf(w, "\n%s\n\n", title.Sprintf(format, a...))
+}

@@ -101,6 +101,29 @@ func TestInfoCaptured(t *testing.T) {
 	}
 }
 
+func TestTitle(t *testing.T) {
+	buf := new(bytes.Buffer)
+	msg.Ftitle(buf, "Section Header")
+
+	want := "\nSection Header\n\n"
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestTitleCaptured(t *testing.T) {
+	titleFunc := func() {
+		msg.Title("Section Header")
+	}
+	got := captureStdout(t, titleFunc)
+	want := "\nSection Header\n\n"
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
 func captureStdout(t *testing.T, printer func()) string {
 	t.Helper()
 	old := os.Stdout // Backup of the real one
