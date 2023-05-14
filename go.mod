@@ -1,11 +1,8 @@
 module github.com/FollowTheProcess/msg
 
-go 1.19
+go 1.20
 
-require (
-	github.com/fatih/color v1.15.0
-	github.com/matryer/is v1.4.1
-)
+require github.com/fatih/color v1.15.0
 
 require (
 	github.com/mattn/go-colorable v0.1.13 // indirect

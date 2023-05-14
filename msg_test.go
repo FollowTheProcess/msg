@@ -1,415 +1,191 @@
-// Note we don't actually test for colors in the printed output, this is tested
-// extensively in github.com/fatih/color. All we test here are our constructs on top
-
-package msg
+package msg_test
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os"
 	"testing"
 
-	"github.com/matryer/is"
+	"github.com/FollowTheProcess/msg"
 )
 
-// testPrinter returns a default symbols and colors but configured to output to 'out'
-// each test should set up their own 'out' from which to read the printed output.
-func testPrinter(stdout io.Writer, stderr io.Writer) Printer {
-	printer := Default()
-	printer.Stdout = stdout
-	printer.Stderr = stderr
-	return printer
+func TestSuccess(t *testing.T) {
+	buf := new(bytes.Buffer)
+	msg.Fsuccess(buf, "Something went well: %v", 42)
+
+	want := "Success: Something went well: 42\n"
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
 }
 
-// setup returns a testPrinter configured to talk to a bytes.Buffer
-// and the pointer to the bytes.Buffer itself to be read from.
-func setup() (stdout, stderr *bytes.Buffer, printer Printer) {
-	stdout = bytes.NewBuffer(nil)
-	stderr = bytes.NewBuffer(nil)
-	printer = testPrinter(stdout, stderr)
-	return
+func TestSuccessCaptured(t *testing.T) {
+	successFunc := func() {
+		msg.Success("Worked")
+	}
+	got := captureStdout(t, successFunc)
+	want := "Success: Worked\n"
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
 }
 
-func TestNewDefault(t *testing.T) {
-	is := is.New(t)
+func TestError(t *testing.T) {
+	buf := new(bytes.Buffer)
+	msg.Ferror(buf, "Something broke: %v", true)
 
-	want := Printer{
-		SymbolInfo:  defaultInfoSymbol,
-		SymbolTitle: defaultTitleSymbol,
-		SymbolWarn:  defaultWarnSymbol,
-		SymbolFail:  defaultFailSymbol,
-		SymbolGood:  defaultGoodSymbol,
-		ColorInfo:   defaultInfoColor,
-		ColorTitle:  defaultTitleColor,
-		ColorWarn:   defaultWarnColor,
-		ColorFail:   defaultFailColor,
-		ColorGood:   defaultGoodColor,
-		Stdout:      os.Stdout,
-		Stderr:      os.Stderr,
+	want := "Error: Something broke: true\n"
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestErrorCaptured(t *testing.T) {
+	errorFunc := func() {
+		msg.Error("Bad number (%v)", 42)
+	}
+	got := captureStderr(t, errorFunc)
+	want := "Error: Bad number (42)\n"
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestWarn(t *testing.T) {
+	buf := new(bytes.Buffer)
+	msg.Fwarn(buf, "skipping directory %s", "./tmp")
+
+	want := "Warning: skipping directory ./tmp\n"
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestWarnCaptured(t *testing.T) {
+	warnFunc := func() {
+		msg.Warn("Skipping something (%d)", 42)
+	}
+	got := captureStdout(t, warnFunc)
+	want := "Warning: Skipping something (42)\n"
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestInfo(t *testing.T) {
+	buf := new(bytes.Buffer)
+	msg.Finfo(buf, "You have %d projects on GitHub", 27)
+
+	want := "Info: You have 27 projects on GitHub\n"
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestInfoCaptured(t *testing.T) {
+	infoFunc := func() {
+		msg.Info("You are %d years old", 29)
+	}
+	got := captureStdout(t, infoFunc)
+	want := "Info: You are 29 years old\n"
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestTitle(t *testing.T) {
+	buf := new(bytes.Buffer)
+	msg.Ftitle(buf, "Section Header")
+
+	want := "\nSection Header\n\n"
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestTitleCaptured(t *testing.T) {
+	titleFunc := func() {
+		msg.Title("Section Header")
+	}
+	got := captureStdout(t, titleFunc)
+	want := "\nSection Header\n\n"
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func captureStdout(t *testing.T, printer func()) string {
+	t.Helper()
+	old := os.Stdout // Backup of the real one
+	defer func() {
+		os.Stdout = old // Set it back even if we error later
+	}()
+
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("os.Pipe() returned an error: %v", err)
 	}
 
-	got := Default()
+	// Set stdout to our new pipe
+	os.Stdout = w
 
-	is.Equal(got, want)
+	capture := make(chan string)
+	// Copy in a goroutine so printing can't block forever
+	go func() {
+		buf := new(bytes.Buffer)
+		io.Copy(buf, r) //nolint: errcheck
+		capture <- buf.String()
+	}()
+
+	// Call our test function that prints to stdout
+	printer()
+
+	// Close the writer
+	w.Close()
+	captured := <-capture
+
+	return captured
 }
 
-func TestPrinter_Title(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	want := "\nI'm a Title\n\n"
-	p.Title("I'm a Title")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_TitleSymbol(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	// Add a symbol
-	p.SymbolTitle = "💨"
-
-	want := "\n💨  I'm a Title\n\n"
-	p.Title("I'm a Title")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Stitle(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	want := "I'm a Stitle"
-	got := p.Stitle("I'm a Stitle")
-	is.Equal(got, want)
-}
-
-func TestPrinter_StitleSymbol(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	// Change the symbol
-	p.SymbolTitle = "💨"
-
-	want := "💨  I'm a Stitle"
-	got := p.Stitle("I'm a Stitle")
-	is.Equal(got, want)
-}
-
-func TestPrinter_Titlef(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("\nTitle about: %s\n\n", about)
-	p.Titlef("Title about: %s", about)
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Stitlef(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("Title about: %s", about)
-	got := p.Stitlef("Title about: %s", about)
-	is.Equal(got, want)
-}
-
-func TestPrinter_Warn(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	want := fmt.Sprintf("%s  I'm a Warning\n", defaultWarnSymbol)
-	p.Warn("I'm a Warning")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Warnf(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Warning you about: %s\n", defaultWarnSymbol, about)
-	p.Warnf("Warning you about: %s", about)
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_WarnSymbol(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	// Change the symbol
-	p.SymbolWarn = "☢️"
-
-	want := "☢️  I'm a Warning\n"
-	p.Warn("I'm a Warning")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Swarn(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	want := fmt.Sprintf("%s  I'm a Swarn", defaultWarnSymbol)
-	got := p.Swarn("I'm a Swarn")
-	is.Equal(got, want)
-}
-
-func TestPrinter_Swarnf(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Warning about: %s", defaultWarnSymbol, about)
-	got := p.Swarnf("Warning about: %s", about)
-	is.Equal(got, want)
-}
-
-func TestPrinter_SwarnSymbol(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	// Change the symbol
-	p.SymbolWarn = "☢️"
-
-	want := "☢️  I'm a Swarn"
-	got := p.Swarn("I'm a Swarn")
-	is.Equal(got, want)
-}
-
-func TestPrinter_Fail(t *testing.T) {
-	is := is.New(t)
-	_, stderr, p := setup()
-
-	want := fmt.Sprintf("%s  Error: I'm a Failure\n", defaultFailSymbol)
-	p.Fail("I'm a Failure")
-	is.Equal(stderr.String(), want)
-}
-
-func TestPrinter_FailSymbol(t *testing.T) {
-	is := is.New(t)
-	_, stderr, p := setup()
-
-	// Change the symbol
-	p.SymbolFail = "🤬"
-
-	want := "🤬  Error: I'm a Failure\n"
-	p.Fail("I'm a Failure")
-	is.Equal(stderr.String(), want)
-}
-
-func TestPrinter_Sfail(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	want := fmt.Sprintf("%s  Error: I'm a Sfail", defaultFailSymbol)
-	got := p.Sfail("I'm a Sfail")
-	is.Equal(got, want)
-}
-
-func TestPrinter_SfailSymbol(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	// Change the symbol
-	p.SymbolFail = "🤬"
-
-	want := "🤬  Error: I'm a Sfail"
-	got := p.Sfail("I'm a Sfail")
-	is.Equal(got, want)
-}
-
-func TestPrinter_Sfailf(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Error: Something about: %s", defaultFailSymbol, about)
-	got := p.Sfailf("Something about: %s", about)
-	is.Equal(got, want)
-}
-
-func TestPrinter_Failf(t *testing.T) {
-	is := is.New(t)
-	_, stderr, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Error: Something: %s\n", defaultFailSymbol, about)
-	p.Failf("Something: %s", about)
-	is.Equal(stderr.String(), want)
-}
-
-func TestPrinter_Good(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	want := fmt.Sprintf("%s  I'm a Success\n", defaultGoodSymbol)
-	p.Good("I'm a Success")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_GoodSymbol(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	// Change the symbol
-	p.SymbolGood = "🎉"
-
-	want := "🎉  I'm a Success\n"
-	p.Good("I'm a Success")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Sgood(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	want := fmt.Sprintf("%s  I'm a Sgood", defaultGoodSymbol)
-	got := p.Sgood("I'm a Sgood")
-	is.Equal(got, want)
-}
-
-func TestPrinter_SgoodSymbol(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	// Change the symbol
-	p.SymbolGood = "🎉"
-
-	want := "🎉  I'm a Sgood"
-	got := p.Sgood("I'm a Sgood")
-	is.Equal(got, want)
-}
-
-func TestPrinter_Goodf(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Success: %s\n", defaultGoodSymbol, about)
-	p.Goodf("Success: %s", about)
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Sgoodf(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Success: %s", defaultGoodSymbol, about)
-	got := p.Sgoodf("Success: %s", about)
-	is.Equal(got, want)
-}
-
-func TestPrinter_Info(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	want := fmt.Sprintf("%s  I'm some Info\n", defaultInfoSymbol)
-	p.Info("I'm some Info")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_InfoSymbol(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	// Change the symbol
-	p.SymbolInfo = "🔎"
-
-	want := "🔎  I'm some Info\n"
-	p.Info("I'm some Info")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Sinfo(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	want := fmt.Sprintf("%s  I'm some Info", defaultInfoSymbol)
-	got := p.Sinfo("I'm some Info")
-	is.Equal(got, want)
-}
-
-func TestPrinter_SinfoSymbol(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	// Change the symbol
-	p.SymbolInfo = "🔎"
-
-	want := "🔎  I'm an Sinfo"
-	got := p.Sinfo("I'm an Sinfo")
-	is.Equal(got, want)
-}
-
-func TestPrinter_Infof(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Info: %s\n", defaultInfoSymbol, about)
-	p.Infof("Info: %s", about)
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Sinfof(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("%s  Info: %s", defaultInfoSymbol, about)
-	got := p.Sinfof("Info: %s", about)
-	is.Equal(got, want)
-}
-
-func TestPrinter_Text(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	want := fmt.Sprintln("I'm some normal text")
-	p.Text("I'm some normal text")
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Stext(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	want := "I'm some normal text"
-	got := p.Stext("I'm some normal text")
-	is.Equal(got, want)
-}
-
-func TestPrinter_Textf(t *testing.T) {
-	is := is.New(t)
-	stdout, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("Some text about: %s\n", about)
-	p.Textf("Some text about: %s", about)
-	is.Equal(stdout.String(), want)
-}
-
-func TestPrinter_Stextf(t *testing.T) {
-	is := is.New(t)
-	_, _, p := setup()
-
-	about := "something"
-
-	want := fmt.Sprintf("Text: %s", about)
-	got := p.Stextf("Text: %s", about)
-	is.Equal(got, want)
+func captureStderr(t *testing.T, printer func()) string {
+	t.Helper()
+	old := os.Stderr // Backup of the real one
+	defer func() {
+		os.Stderr = old // Set it back even if we error later
+	}()
+
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("os.Pipe() returned an error: %v", err)
+	}
+
+	// Set stderr to our new pipe
+	os.Stderr = w
+
+	capture := make(chan string)
+	// Copy in a goroutine so printing can't block forever
+	go func() {
+		buf := new(bytes.Buffer)
+		io.Copy(buf, r) //nolint: errcheck
+		capture <- buf.String()
+	}()
+
+	// Call our test function that prints to stderr
+	printer()
+
+	// Close the writer
+	w.Close()
+	captured := <-capture
+
+	return captured
 }
