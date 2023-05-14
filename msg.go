@@ -80,3 +80,18 @@ func Fwarn(w io.Writer, format string, a ...any) {
 
 	fmt.Fprintf(w, "%s: %s\n", warn.Sprint(statusWarn), message.Sprintf(format, a...))
 }
+
+// Info prints an info message with optional format args to stdout.
+//
+//	msg.Info("You have %d repos on GitHub", 42)
+func Info(format string, a ...any) {
+	Finfo(os.Stdout, format, a...)
+}
+
+// Finfo prints an info message with optional format args to w.
+func Finfo(w io.Writer, format string, a ...any) {
+	info := color.New(colorInfo, color.Bold)
+	message := color.New(color.FgHiWhite)
+
+	fmt.Fprintf(w, "%s: %s\n", info.Sprint(statusInfo), message.Sprintf(format, a...))
+}

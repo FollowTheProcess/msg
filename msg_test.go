@@ -78,6 +78,29 @@ func TestWarnCaptured(t *testing.T) {
 	}
 }
 
+func TestInfo(t *testing.T) {
+	buf := new(bytes.Buffer)
+	msg.Finfo(buf, "You have %d projects on GitHub", 27)
+
+	want := "Info: You have 27 projects on GitHub\n"
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestInfoCaptured(t *testing.T) {
+	infoFunc := func() {
+		msg.Info("You are %d years old", 29)
+	}
+	got := captureStdout(t, infoFunc)
+	want := "Info: You are 29 years old\n"
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
 func captureStdout(t *testing.T, printer func()) string {
 	t.Helper()
 	old := os.Stdout // Backup of the real one
