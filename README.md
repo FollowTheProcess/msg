@@ -10,7 +10,7 @@
 🚀 A lightweight terminal printing toolkit for Go CLIs.
 
 <p align="center">
-<img src="https://github.com/FollowTheProcess/msg/raw/main/img/demo.svg" alt="demo">
+<img src="https://github.com/FollowTheProcess/msg/raw/main/img/demo.png" alt="demo">
 </p>
 
 ## Project Description
