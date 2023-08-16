@@ -37,12 +37,18 @@ const (
 
 // Success prints a success message with optional format args to stdout.
 //
+// # Example
+//
 //	msg.Success("Compiled project: %s", "msg")
 func Success(format string, a ...any) {
 	Fsuccess(os.Stdout, format, a...)
 }
 
 // Fsuccess prints a success message with optional format args to w.
+//
+// # Example
+//
+//	msg.Fsuccess(os.Stdout, "Compiled project: %s", "msg")
 func Fsuccess(w io.Writer, format string, a ...any) {
 	success := color.New(colorSuccess, color.Bold)
 	message := color.New(color.FgHiWhite)
@@ -52,6 +58,8 @@ func Fsuccess(w io.Writer, format string, a ...any) {
 
 // Error prints an error message with optional format args to stderr.
 //
+// # Example
+//
 //	msg.Error("Invalid config")
 //	msg.Error("Could not find file: %s", "missing.txt")
 func Error(format string, a ...any) {
@@ -59,6 +67,10 @@ func Error(format string, a ...any) {
 }
 
 // Ferror prints an error message with optional format args to w.
+//
+// # Example
+//
+//	msg.Ferror(os.Stderr, "Uh oh! %s", "something wrong")
 func Ferror(w io.Writer, format string, a ...any) {
 	e := color.New(colorError, color.Bold)
 	message := color.New(color.FgHiWhite)
@@ -68,12 +80,18 @@ func Ferror(w io.Writer, format string, a ...any) {
 
 // Warn prints a warning message with optional format args to stdout.
 //
+// # Example
+//
 //	msg.Warn("Skipping %s, directory is empty", "some/empty/dir")
 func Warn(format string, a ...any) {
 	Fwarn(os.Stdout, format, a...)
 }
 
 // Fwarn prints a warning message with optional format args to w.
+//
+// # Example
+//
+//	msg.Fwarn(os.Stderr, "hmmmm: %v", true)
 func Fwarn(w io.Writer, format string, a ...any) {
 	warn := color.New(colorWarn, color.Bold)
 	message := color.New(color.FgHiWhite)
@@ -83,12 +101,18 @@ func Fwarn(w io.Writer, format string, a ...any) {
 
 // Info prints an info message with optional format args to stdout.
 //
+// # Example
+//
 //	msg.Info("You have %d repos on GitHub", 42)
 func Info(format string, a ...any) {
 	Finfo(os.Stdout, format, a...)
 }
 
 // Finfo prints an info message with optional format args to w.
+//
+// # Example
+//
+//	msg.Finfo(os.Stdout, "The meaning of life is %v", 42)
 func Finfo(w io.Writer, format string, a ...any) {
 	info := color.New(colorInfo, color.Bold)
 	message := color.New(color.FgHiWhite)
@@ -102,6 +126,8 @@ func Finfo(w io.Writer, format string, a ...any) {
 // has 1 leading newline and 2 trailing newlines to create separation between
 // the sections it is differentiating in your CLI.
 //
+// # Example
+//
 //	msg.Title("Some section")
 func Title(format string, a ...any) {
 	Ftitle(os.Stdout, format, a...)
@@ -112,6 +138,10 @@ func Title(format string, a ...any) {
 // A title message differs from every other message type in msg as it
 // has 1 leading newline and 2 trailing newlines to create separation between
 // the sections it is differentiating in your CLI.
+//
+// # Example
+//
+//	msg.Ftitle(os.Stdout, "Some section")
 func Ftitle(w io.Writer, format string, a ...any) {
 	title := color.New(colorTitle, color.Bold)
 
