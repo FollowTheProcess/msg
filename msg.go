@@ -51,7 +51,7 @@ func Success(format string, a ...any) {
 //	msg.Fsuccess(os.Stdout, "Compiled project: %s", "msg")
 func Fsuccess(w io.Writer, format string, a ...any) {
 	success := color.New(colorSuccess, color.Bold)
-	message := color.New(color.FgHiWhite)
+	message := color.New(color.FgWhite)
 
 	fmt.Fprintf(w, "%s: %s\n", success.Sprint(statusSuccess), message.Sprintf(format, a...))
 }
@@ -73,7 +73,7 @@ func Error(format string, a ...any) {
 //	msg.Ferror(os.Stderr, "Uh oh! %s", "something wrong")
 func Ferror(w io.Writer, format string, a ...any) {
 	e := color.New(colorError, color.Bold)
-	message := color.New(color.FgHiWhite)
+	message := color.New(color.FgWhite)
 
 	fmt.Fprintf(w, "%s: %s\n", e.Sprint(statusError), message.Sprintf(format, a...))
 }
@@ -94,7 +94,7 @@ func Warn(format string, a ...any) {
 //	msg.Fwarn(os.Stderr, "hmmmm: %v", true)
 func Fwarn(w io.Writer, format string, a ...any) {
 	warn := color.New(colorWarn, color.Bold)
-	message := color.New(color.FgHiWhite)
+	message := color.New(color.FgWhite)
 
 	fmt.Fprintf(w, "%s: %s\n", warn.Sprint(statusWarn), message.Sprintf(format, a...))
 }
@@ -115,7 +115,7 @@ func Info(format string, a ...any) {
 //	msg.Finfo(os.Stdout, "The meaning of life is %v", 42)
 func Finfo(w io.Writer, format string, a ...any) {
 	info := color.New(colorInfo, color.Bold)
-	message := color.New(color.FgHiWhite)
+	message := color.New(color.FgWhite)
 
 	fmt.Fprintf(w, "%s: %s\n", info.Sprint(statusInfo), message.Sprintf(format, a...))
 }
