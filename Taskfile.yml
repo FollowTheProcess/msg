@@ -4,12 +4,13 @@ version: "3"
 
 vars:
   COV_DATA: coverage.out
+  PACKAGE: github.com/FollowTheProcess/msg
 
 tasks:
   default:
     desc: List all available tasks
     silent: true
-    cmds: 
+    cmds:
       - task --list
 
   tidy:
@@ -36,14 +37,14 @@ tasks:
     desc: Run the test suite
     sources:
       - "**/*.go"
-    cmds: 
+    cmds:
       - go test -race ./... {{ .CLI_ARGS }}
 
   bench:
     desc: Run all project benchmarks
     sources:
       - "**/*.go"
-    cmds: 
+    cmds:
       - go test ./... -run None -benchmem -bench . {{ .CLI_ARGS }}
 
   lint:
@@ -51,19 +52,31 @@ tasks:
     sources:
       - "**/*.go"
       - .golangci.yml
-    cmds: 
+    cmds:
       - golangci-lint run --fix
     preconditions:
       - sh: command -v golangci-lint
         msg: golangci-lint not installed, see https://golangci-lint.run/usage/install/#local-installation
 
-  doc:
+  docs:
     desc: Render the pkg docs locally
     cmds:
       - pkgsite -open
     preconditions:
       - sh: command -v pkgsite
         msg: pkgsite not installed, run go install golang.org/x/pkgsite/cmd/pkgsite@latest
+
+  demo:
+    desc: Render the demo gifs
+    sources:
+      - ./docs/src/*.tape
+      - ./docs/src/*.go
+    preconditions:
+      - sh: command -v vhs
+        msg: vhs not installed, see https://github.com/charmbracelet/vhs
+    cmds:
+      - vhs ./docs/src/*.tape
+      - silicon ./docs/src/main.go --output ./docs/img/demo.png --background "#7983FF" --language go --shadow-blur-radius 10 --window-title {{.PACKAGE}}
 
   cov:
     desc: Calculate test coverage and render the html
@@ -81,7 +94,7 @@ tasks:
 
   sloc:
     desc: Print lines of code
-    cmds: 
+    cmds:
       - fd . -e go | xargs wc -l | sort -nr | head
 
   clean:
