@@ -17,17 +17,10 @@ import (
 	"io"
 	"os"
 
-	"github.com/fatih/color"
+	"github.com/FollowTheProcess/msg/internal/colour"
 )
 
 const (
-	// Default colors for each message type.
-	colorInfo    = color.FgHiCyan
-	colorTitle   = color.FgCyan
-	colorWarn    = color.FgYellow
-	colorError   = color.FgHiRed
-	colorSuccess = color.FgGreen
-
 	// Default statuses for each message type.
 	statusInfo    = "Info"
 	statusWarn    = "Warning"
@@ -37,8 +30,6 @@ const (
 
 // Success prints a success message with optional format args to stdout.
 //
-// # Example
-//
 //	msg.Success("Compiled project: %s", "msg")
 func Success(format string, a ...any) {
 	Fsuccess(os.Stdout, format, a...)
@@ -46,19 +37,12 @@ func Success(format string, a ...any) {
 
 // Fsuccess prints a success message with optional format args to w.
 //
-// # Example
-//
 //	msg.Fsuccess(os.Stdout, "Compiled project: %s", "msg")
 func Fsuccess(w io.Writer, format string, a ...any) {
-	success := color.New(colorSuccess, color.Bold)
-	message := color.New(color.FgWhite)
-
-	fmt.Fprintf(w, "%s: %s\n", success.Sprint(statusSuccess), message.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", colour.Success(statusSuccess), fmt.Sprintf(format, a...))
 }
 
 // Error prints an error message with optional format args to stderr.
-//
-// # Example
 //
 //	msg.Error("Invalid config")
 //	msg.Error("Could not find file: %s", "missing.txt")
@@ -68,19 +52,12 @@ func Error(format string, a ...any) {
 
 // Ferror prints an error message with optional format args to w.
 //
-// # Example
-//
 //	msg.Ferror(os.Stderr, "Uh oh! %s", "something wrong")
 func Ferror(w io.Writer, format string, a ...any) {
-	e := color.New(colorError, color.Bold)
-	message := color.New(color.FgWhite)
-
-	fmt.Fprintf(w, "%s: %s\n", e.Sprint(statusError), message.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", colour.Error(statusError), fmt.Sprintf(format, a...))
 }
 
 // Warn prints a warning message with optional format args to stdout.
-//
-// # Example
 //
 //	msg.Warn("Skipping %s, directory is empty", "some/empty/dir")
 func Warn(format string, a ...any) {
@@ -89,19 +66,12 @@ func Warn(format string, a ...any) {
 
 // Fwarn prints a warning message with optional format args to w.
 //
-// # Example
-//
 //	msg.Fwarn(os.Stderr, "hmmmm: %v", true)
 func Fwarn(w io.Writer, format string, a ...any) {
-	warn := color.New(colorWarn, color.Bold)
-	message := color.New(color.FgWhite)
-
-	fmt.Fprintf(w, "%s: %s\n", warn.Sprint(statusWarn), message.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", colour.Warn(statusWarn), fmt.Sprintf(format, a...))
 }
 
 // Info prints an info message with optional format args to stdout.
-//
-// # Example
 //
 //	msg.Info("You have %d repos on GitHub", 42)
 func Info(format string, a ...any) {
@@ -110,14 +80,9 @@ func Info(format string, a ...any) {
 
 // Finfo prints an info message with optional format args to w.
 //
-// # Example
-//
 //	msg.Finfo(os.Stdout, "The meaning of life is %v", 42)
 func Finfo(w io.Writer, format string, a ...any) {
-	info := color.New(colorInfo, color.Bold)
-	message := color.New(color.FgWhite)
-
-	fmt.Fprintf(w, "%s: %s\n", info.Sprint(statusInfo), message.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", colour.Info(statusInfo), fmt.Sprintf(format, a...))
 }
 
 // Title prints a title message to stdout.
@@ -125,8 +90,6 @@ func Finfo(w io.Writer, format string, a ...any) {
 // A title message differs from every other message type in msg as it
 // has 1 leading newline and 2 trailing newlines to create separation between
 // the sections it is differentiating in your CLI.
-//
-// # Example
 //
 //	msg.Title("Some section")
 func Title(format string, a ...any) {
@@ -139,11 +102,7 @@ func Title(format string, a ...any) {
 // has 1 leading newline and 2 trailing newlines to create separation between
 // the sections it is differentiating in your CLI.
 //
-// # Example
-//
 //	msg.Ftitle(os.Stdout, "Some section")
 func Ftitle(w io.Writer, format string, a ...any) {
-	title := color.New(colorTitle, color.Bold)
-
-	fmt.Fprintf(w, "\n%s\n\n", title.Sprintf(format, a...))
+	fmt.Fprintf(w, "\n%s\n\n", colour.Title(fmt.Sprintf(format, a...)))
 }
