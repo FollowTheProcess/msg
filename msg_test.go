@@ -2,18 +2,20 @@ package msg_test
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"testing"
 
 	"github.com/FollowTheProcess/msg"
+	"github.com/FollowTheProcess/msg/internal/colour"
 )
 
 func TestSuccess(t *testing.T) {
 	buf := new(bytes.Buffer)
 	msg.Fsuccess(buf, "Something went well: %v", 42)
 
-	want := "Success: Something went well: 42\n"
+	want := fmt.Sprintf("%sSuccess%s: Something went well: 42\n", colour.CodeSuccess, colour.CodeReset)
 
 	if got := buf.String(); got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -25,7 +27,7 @@ func TestSuccessCaptured(t *testing.T) {
 		msg.Success("Worked")
 	}
 	got := captureStdout(t, successFunc)
-	want := "Success: Worked\n"
+	want := fmt.Sprintf("%sSuccess%s: Worked\n", colour.CodeSuccess, colour.CodeReset)
 
 	if got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -36,7 +38,7 @@ func TestError(t *testing.T) {
 	buf := new(bytes.Buffer)
 	msg.Ferror(buf, "Something broke: %v", true)
 
-	want := "Error: Something broke: true\n"
+	want := fmt.Sprintf("%sError%s: Something broke: true\n", colour.CodeError, colour.CodeReset)
 
 	if got := buf.String(); got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -48,7 +50,7 @@ func TestErrorCaptured(t *testing.T) {
 		msg.Error("Bad number (%v)", 42)
 	}
 	got := captureStderr(t, errorFunc)
-	want := "Error: Bad number (42)\n"
+	want := fmt.Sprintf("%sError%s: Bad number (42)\n", colour.CodeError, colour.CodeReset)
 
 	if got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -59,7 +61,7 @@ func TestWarn(t *testing.T) {
 	buf := new(bytes.Buffer)
 	msg.Fwarn(buf, "skipping directory %s", "./tmp")
 
-	want := "Warning: skipping directory ./tmp\n"
+	want := fmt.Sprintf("%sWarning%s: skipping directory ./tmp\n", colour.CodeWarn, colour.CodeReset)
 
 	if got := buf.String(); got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -71,7 +73,7 @@ func TestWarnCaptured(t *testing.T) {
 		msg.Warn("Skipping something (%d)", 42)
 	}
 	got := captureStdout(t, warnFunc)
-	want := "Warning: Skipping something (42)\n"
+	want := fmt.Sprintf("%sWarning%s: Skipping something (42)\n", colour.CodeWarn, colour.CodeReset)
 
 	if got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -82,7 +84,7 @@ func TestInfo(t *testing.T) {
 	buf := new(bytes.Buffer)
 	msg.Finfo(buf, "You have %d projects on GitHub", 27)
 
-	want := "Info: You have 27 projects on GitHub\n"
+	want := fmt.Sprintf("%sInfo%s: You have 27 projects on GitHub\n", colour.CodeInfo, colour.CodeReset)
 
 	if got := buf.String(); got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -94,7 +96,7 @@ func TestInfoCaptured(t *testing.T) {
 		msg.Info("You are %d years old", 29)
 	}
 	got := captureStdout(t, infoFunc)
-	want := "Info: You are 29 years old\n"
+	want := fmt.Sprintf("%sInfo%s: You are 29 years old\n", colour.CodeInfo, colour.CodeReset)
 
 	if got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -105,7 +107,7 @@ func TestTitle(t *testing.T) {
 	buf := new(bytes.Buffer)
 	msg.Ftitle(buf, "Section Header")
 
-	want := "\nSection Header\n\n"
+	want := fmt.Sprintf("\n%sSection Header%s\n\n", colour.CodeTitle, colour.CodeReset)
 
 	if got := buf.String(); got != want {
 		t.Errorf("got %q, wanted %q", got, want)
@@ -117,7 +119,7 @@ func TestTitleCaptured(t *testing.T) {
 		msg.Title("Section Header")
 	}
 	got := captureStdout(t, titleFunc)
-	want := "\nSection Header\n\n"
+	want := fmt.Sprintf("\n%sSection Header%s\n\n", colour.CodeTitle, colour.CodeReset)
 
 	if got != want {
 		t.Errorf("got %q, wanted %q", got, want)
