@@ -1,7 +1,7 @@
 // Package colour implements basic text colouring for msg's limited needs.
 //
 // In particular, it's not expected to provide every ANSI code, just the ones we need. The codes have also been padded so that they are
-// the same length, which means [text/tabwriter] will correctly calculate alignment as long as styles are not mixed within a table.
+// the same length, which means [text/tabwriter] will correctly calculate alignment as long as styles are not mixed within a table cell.
 //
 // The functions in this package respect both $NO_COLOR and $FORCE_COLOR.
 package colour

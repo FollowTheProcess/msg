@@ -2,6 +2,7 @@ package msg_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -51,6 +52,31 @@ func TestErrorCaptured(t *testing.T) {
 	}
 	got := captureStderr(t, errorFunc)
 	want := fmt.Sprintf("%sError%s: Bad number (42)\n", colour.CodeError, colour.CodeReset)
+
+	if got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestErr(t *testing.T) {
+	buf := new(bytes.Buffer)
+	err := errors.New("Something broke")
+	msg.Ferr(buf, err)
+
+	want := fmt.Sprintf("%sError%s: Something broke\n", colour.CodeError, colour.CodeReset)
+
+	if got := buf.String(); got != want {
+		t.Errorf("got %q, wanted %q", got, want)
+	}
+}
+
+func TestErrCaptured(t *testing.T) {
+	errorFunc := func() {
+		err := errors.New("Bang!")
+		msg.Err(err)
+	}
+	got := captureStderr(t, errorFunc)
+	want := fmt.Sprintf("%sError%s: Bang!\n", colour.CodeError, colour.CodeReset)
 
 	if got != want {
 		t.Errorf("got %q, wanted %q", got, want)

@@ -50,11 +50,31 @@ func Error(format string, a ...any) {
 	Ferror(os.Stderr, format, a...)
 }
 
+// Err is a convenience wrapper around [Error] allowing passing an error directly
+// without the need for the %v format verb.
+//
+//	err := errors.New("Uh oh!")
+//	msg.Err(err) // Equivalent to msg.Error("%v", err)
+func Err(err error) {
+	Error("%v", err)
+}
+
 // Ferror prints an error message with optional format args to w.
 //
 //	msg.Ferror(os.Stderr, "Uh oh! %s", "something wrong")
 func Ferror(w io.Writer, format string, a ...any) {
 	fmt.Fprintf(w, "%s: %s\n", colour.Error(statusError), fmt.Sprintf(format, a...))
+}
+
+// Ferr is a convenience wrapper around [Ferror] allowing passing an error directly
+// without the new for the %v format verb.
+//
+// It is the 'F' equivalent of [Err], taking an [io.Writer] to print the error to.
+//
+//	err := errors.New("Uh oh!")
+//	msg.Ferr(os.Stderr, err) // Equivalent to msg.Ferror(os.Stderr, "%v", err)
+func Ferr(w io.Writer, err error) {
+	Ferror(w, "%v", err)
 }
 
 // Warn prints a warning message with optional format args to stdout.
