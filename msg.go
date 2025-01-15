@@ -17,7 +17,15 @@ import (
 	"io"
 	"os"
 
-	"github.com/FollowTheProcess/msg/internal/colour"
+	"github.com/FollowTheProcess/hue"
+)
+
+const (
+	styleError   = hue.Red | hue.Bold
+	styleTitle   = hue.BrightCyan
+	styleInfo    = hue.Cyan | hue.Bold
+	styleWarn    = hue.Yellow | hue.Bold
+	styleSuccess = hue.Green | hue.Bold
 )
 
 const (
@@ -39,7 +47,7 @@ func Success(format string, a ...any) {
 //
 //	msg.Fsuccess(os.Stdout, "Compiled project: %s", "msg")
 func Fsuccess(w io.Writer, format string, a ...any) {
-	fmt.Fprintf(w, "%s: %s\n", colour.Success(statusSuccess), fmt.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", styleSuccess.Sprint(statusSuccess), fmt.Sprintf(format, a...))
 }
 
 // Error prints an error message with optional format args to stderr.
@@ -63,7 +71,7 @@ func Err(err error) {
 //
 //	msg.Ferror(os.Stderr, "Uh oh! %s", "something wrong")
 func Ferror(w io.Writer, format string, a ...any) {
-	fmt.Fprintf(w, "%s: %s\n", colour.Error(statusError), fmt.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", styleError.Sprint(statusError), fmt.Sprintf(format, a...))
 }
 
 // Ferr is a convenience wrapper around [Ferror] allowing passing an error directly
@@ -88,7 +96,7 @@ func Warn(format string, a ...any) {
 //
 //	msg.Fwarn(os.Stderr, "hmmmm: %v", true)
 func Fwarn(w io.Writer, format string, a ...any) {
-	fmt.Fprintf(w, "%s: %s\n", colour.Warn(statusWarn), fmt.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", styleWarn.Sprint(statusWarn), fmt.Sprintf(format, a...))
 }
 
 // Info prints an info message with optional format args to stdout.
@@ -102,7 +110,7 @@ func Info(format string, a ...any) {
 //
 //	msg.Finfo(os.Stdout, "The meaning of life is %v", 42)
 func Finfo(w io.Writer, format string, a ...any) {
-	fmt.Fprintf(w, "%s: %s\n", colour.Info(statusInfo), fmt.Sprintf(format, a...))
+	fmt.Fprintf(w, "%s: %s\n", styleInfo.Sprint(statusInfo), fmt.Sprintf(format, a...))
 }
 
 // Title prints a title message to stdout.
@@ -124,5 +132,5 @@ func Title(format string, a ...any) {
 //
 //	msg.Ftitle(os.Stdout, "Some section")
 func Ftitle(w io.Writer, format string, a ...any) {
-	fmt.Fprintf(w, "\n%s\n\n", colour.Title(fmt.Sprintf(format, a...)))
+	fmt.Fprintf(w, "\n%s\n\n", styleTitle.Sprint(fmt.Sprintf(format, a...)))
 }
