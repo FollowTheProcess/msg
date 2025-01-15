@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/FollowTheProcess/hue"
 	"github.com/FollowTheProcess/msg"
 )
 
@@ -19,6 +20,13 @@ const (
 	titleCode   = "\x1b[96m"
 	resetCode   = "\x1b[0m"
 )
+
+func TestMain(m *testing.M) {
+	// Disable colour auto-detection so CI passes
+	hue.Enabled(true)
+	code := m.Run()
+	os.Exit(code)
+}
 
 func TestSuccess(t *testing.T) {
 	buf := new(bytes.Buffer)
