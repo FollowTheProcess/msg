@@ -58,10 +58,9 @@
 # Run from the repo root
 Output ./docs/img/demo.gif
 
-Set Shell fish
 Set FontSize 18
-Set FontFamily "SFMono Nerd Font"
-Set Theme "Catppuccin Mocha"
+Set FontFamily "GeistMono Nerd Font Mono"
+Set Theme "Catppuccin Macchiato"
 Set WindowBar Colorful
 Set Padding 5
 Set Height 800
