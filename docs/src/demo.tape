@@ -59,7 +59,7 @@
 Output ./docs/img/demo.gif
 
 Set FontSize 18
-Set FontFamily "GeistMono Nerd Font Mono"
+Set FontFamily "Geist Mono"
 Set Theme "Catppuccin Macchiato"
 Set WindowBar Colorful
 Set Padding 5
@@ -72,4 +72,4 @@ Set TypingSpeed 100ms
 
 Type "go run ./docs/src/main.go" Sleep 500ms  Enter
 
-Sleep 5s
+Sleep 8s

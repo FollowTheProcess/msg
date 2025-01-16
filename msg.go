@@ -13,9 +13,11 @@
 package msg
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/FollowTheProcess/hue"
 )
@@ -26,6 +28,7 @@ const (
 	styleInfo    = hue.Cyan | hue.Bold
 	styleWarn    = hue.Yellow | hue.Bold
 	styleSuccess = hue.Green | hue.Bold
+	styleCause   = hue.Bold
 )
 
 const (
@@ -58,13 +61,25 @@ func Error(format string, a ...any) {
 	Ferror(os.Stderr, format, a...)
 }
 
-// Err is a convenience wrapper around [Error] allowing passing an error directly
-// without the need for the %v format verb.
+// Err prints a nicely formatted error message from an actual error to [os.Stderr], bypassing
+// the need for the caller to construct the format string.
 //
 //	err := errors.New("Uh oh!")
 //	msg.Err(err) // Equivalent to msg.Error("%v", err)
+//
+// In the case of wrapped errors with [fmt.Errorf], Err recursively unwraps the error,
+// showing each of the errors in the causal chain in a tree-like structure.
+//
+//	root := errors.New("some deep error")
+//	wrapped := fmt.Errorf("could not process file: %w", root)
+//	again := fmt.Errorf("failed to do thing: %w", wrapped)
+//	msg.Err(again) // Unwraps the above and shows each cause as a new indented line
+//
+// The intended use case for Err is at the top level of a CLI application where all
+// errors are eventually bubbled up to with the appropriate context, which Err can
+// then show to end users in a very clear, concise way.
 func Err(err error) {
-	Error("%v", err)
+	Ferr(os.Stderr, err)
 }
 
 // Ferror prints an error message with optional format args to w.
@@ -74,15 +89,58 @@ func Ferror(w io.Writer, format string, a ...any) {
 	fmt.Fprintf(w, "%s: %s\n", styleError.Sprint(statusError), fmt.Sprintf(format, a...))
 }
 
-// Ferr is a convenience wrapper around [Ferror] allowing passing an error directly
-// without the new for the %v format verb.
-//
-// It is the 'F' equivalent of [Err], taking an [io.Writer] to print the error to.
+// Ferr prints a nicely formatted error message from an actual error to w, bypassing
+// the need for the caller to construct the format string.
 //
 //	err := errors.New("Uh oh!")
-//	msg.Ferr(os.Stderr, err) // Equivalent to msg.Ferror(os.Stderr, "%v", err)
+//	msg.Ferr(os.Stderr, err) // Equivalent to msg.Err(err)
+//
+// In the case of wrapped errors with [fmt.Errorf], Ferr recursively unwraps the error,
+// showing each of the errors in the causal chain in a tree-like structure.
+//
+//	root := errors.New("some deep error")
+//	wrapped := fmt.Errorf("could not process file: %w", root)
+//	again := fmt.Errorf("failed to do thing: %w", wrapped)
+//	msg.Ferr(os.Stderr, again) // Unwraps the above and shows each cause as a new indented line
+//
+// The intended use case for Ferr and [Err] is at the top level of a CLI application where all
+// errors are eventually bubbled up to with the appropriate context, which can
+// then be shown to end users in a very clear, concise way.
 func Ferr(w io.Writer, err error) {
-	Ferror(w, "%v", err)
+	if err == nil {
+		return
+	}
+
+	// No wrapped errors, just do what [Error] does
+	if errors.Unwrap(err) == nil {
+		Ferror(w, "%v", err)
+		return
+	}
+
+	// TODO(@FollowTheProcess): We should be able to build this stack of errors by
+	// calling Unwrap alone as that is less fragile, but because each layer of unwrap contains
+	// all the child elements too we need something a bit clever to recurse all the way down to <nil>, then
+	// build the stack back up from the bottom up. For example you'd get something like:
+	// failed to do something: could not find file: invalid permissions: super deep error
+	// cause: could not find file: invalid permissions: super deep error
+	// cause: invalid permissions: super deep error
+	// cause: super deep error
+	//
+	// With each level having all the child errors in so you get lots of duplication, splitting
+	// on colons is a bit of a hack that relies on convention `fmt.Errorf("some error: %w", err)`
+	// but it works well enough for me for now as I always do that anyway
+
+	chain := strings.Split(err.Error(), ":")
+	root := chain[0]
+	causes := chain[1:]
+
+	Ferror(w, "%v", strings.TrimSpace(root))
+
+	indent := 0
+	for _, cause := range causes {
+		fmt.Fprintf(w, "%s╰─ %s: %v\n", strings.Repeat(" ", indent), styleCause.Sprint("cause"), strings.TrimSpace(cause))
+		indent += 3
+	}
 }
 
 // Warn prints a warning message with optional format args to stdout.
