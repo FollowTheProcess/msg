@@ -78,7 +78,7 @@ func TestErrorCaptured(t *testing.T) {
 func TestErr(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		buf := new(bytes.Buffer)
-		var err error = nil
+		var err error
 		msg.Ferr(buf, err)
 
 		if buf.Len() != 0 {
@@ -121,11 +121,11 @@ func TestErr(t *testing.T) {
 func TestErrCaptured(t *testing.T) {
 	t.Run("plain", func(t *testing.T) {
 		errorFunc := func() {
-			err := errors.New("Bang!")
+			err := errors.New("bang")
 			msg.Err(err)
 		}
 		got := captureStderr(t, errorFunc)
-		want := fmt.Sprintf("%sError%s: Bang!\n", errorCode, resetCode)
+		want := fmt.Sprintf("%sError%s: bang\n", errorCode, resetCode)
 
 		if got != want {
 			t.Errorf("got %q, wanted %q", got, want)
@@ -133,7 +133,7 @@ func TestErrCaptured(t *testing.T) {
 	})
 	t.Run("wrapped", func(t *testing.T) {
 		errorFunc := func() {
-			root := errors.New("bang!")
+			root := errors.New("bang")
 			one := fmt.Errorf("dingle cannot dangle on version <2: %w", root)
 			two := fmt.Errorf("could not read file: %w", one)
 			three := fmt.Errorf("you have no money: %w", two)
@@ -142,7 +142,7 @@ func TestErrCaptured(t *testing.T) {
 		wantTemplate := `%[1]sError%[2]s: you have no money
 ╰─ %[3]scause%[2]s: could not read file
    ╰─ %[3]scause%[2]s: dingle cannot dangle on version <2
-      ╰─ %[3]scause%[2]s: bang!
+      ╰─ %[3]scause%[2]s: bang
 `
 		got := captureStderr(t, errorFunc)
 		want := fmt.Sprintf(wantTemplate, errorCode, resetCode, causeCode)
@@ -257,7 +257,7 @@ func captureStdout(t *testing.T, printer func()) string {
 	// Copy in a goroutine so printing can't block forever
 	go func() {
 		buf := new(bytes.Buffer)
-		io.Copy(buf, r) //nolint: errcheck
+		io.Copy(buf, r) //nolint: errcheck // It's fine
 		capture <- buf.String()
 	}()
 
@@ -290,7 +290,7 @@ func captureStderr(t *testing.T, printer func()) string {
 	// Copy in a goroutine so printing can't block forever
 	go func() {
 		buf := new(bytes.Buffer)
-		io.Copy(buf, r) //nolint: errcheck
+		io.Copy(buf, r) //nolint: errcheck // It's fine
 		capture <- buf.String()
 	}()
 
