@@ -8,7 +8,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/FollowTheProcess/hue"
 	"github.com/FollowTheProcess/msg"
 )
 
@@ -24,7 +23,7 @@ const (
 
 func TestMain(m *testing.M) {
 	// Disable colour auto-detection so CI passes
-	hue.Enabled(true)
+	msg.ColorEnabled(true)
 	code := m.Run()
 	os.Exit(code)
 }
