@@ -26,7 +26,7 @@ It's so easy, you *already* know how it works!
 ## Installation
 
 ```shell
-go get github.com/FollowTheProcess/msg@latest
+go get followtheprocess.codes@latest
 ```
 
 ## Quickstart
