@@ -70,14 +70,16 @@ tasks:
     desc: Render the demo gifs
     sources:
       - ./docs/src/*.tape
-      - ./docs/src/*.go
       - "**/*.go"
     preconditions:
       - sh: command -v vhs
         msg: vhs not installed, see https://github.com/charmbracelet/vhs
+
+      - sh: command -v freeze
+        msg: freeze not installed, see https://github.com/charmbracelet/freeze
     cmds:
       - vhs ./docs/src/*.tape
-      - silicon ./docs/src/main.go --output ./docs/img/demo.png --background "#7983FF" --language go --shadow-blur-radius 10 --window-title {{.PACKAGE}} --font 'Geist Mono' --theme Coldark-Dark
+      - freeze ./docs/src/main.go --config ./docs/src/freeze.json --output ./docs/img/demo.png --show-line-numbers
 
   cov:
     desc: Calculate test coverage and render the html
