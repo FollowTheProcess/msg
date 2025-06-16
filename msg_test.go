@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/FollowTheProcess/msg"
+	"go.followtheprocess.codes/msg"
 )
 
 const (

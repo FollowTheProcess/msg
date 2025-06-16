@@ -10,7 +10,7 @@
 // All message types default to stdout other than the `Error` type which prints to stderr by default.
 //
 // There are also "F-style" print methods that allow you to specify an [io.Writer] to print the messages to.
-package msg
+package msg // import "go.followtheprocess.codes/msg"
 
 import (
 	"errors"
