@@ -1,4 +1,4 @@
-module github.com/FollowTheProcess/msg
+module go.followtheprocess.codes/msg
 
 go 1.24
 
