@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/FollowTheProcess/msg"
+	"go.followtheprocess.codes/msg"
 )
 
 func main() {
