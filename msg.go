@@ -19,7 +19,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/FollowTheProcess/hue"
+	"go.followtheprocess.codes/hue"
 )
 
 const (
