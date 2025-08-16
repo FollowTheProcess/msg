@@ -1,6 +1,6 @@
 module go.followtheprocess.codes/msg
 
-go 1.25.0
+go 1.25
 
 require go.followtheprocess.codes/hue v0.6.0
 
