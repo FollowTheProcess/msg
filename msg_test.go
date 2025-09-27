@@ -76,6 +76,7 @@ func TestErrorCaptured(t *testing.T) {
 func TestErr(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		buf := new(bytes.Buffer)
+
 		var err error
 		msg.Ferr(buf, err)
 
@@ -102,6 +103,7 @@ func TestErr(t *testing.T) {
 		two := fmt.Errorf("failed to process file: %w", one)
 		three := fmt.Errorf("could not deposit money: %w", two)
 		msg.Ferr(buf, three)
+
 		wantTemplate := `%[1]sError%[2]s: could not deposit money
 ╰─ %[3]scause%[2]s: failed to process file
    ╰─ %[3]scause%[2]s: could not frobnicate the baz
@@ -238,7 +240,9 @@ func TestVisual(t *testing.T) {
 
 func captureStdout(t *testing.T, printer func()) string {
 	t.Helper()
+
 	old := os.Stdout // Backup of the real one
+
 	defer func() {
 		os.Stdout = old // Set it back even if we error later
 	}()
@@ -256,6 +260,7 @@ func captureStdout(t *testing.T, printer func()) string {
 	go func() {
 		buf := new(bytes.Buffer)
 		io.Copy(buf, r) //nolint: errcheck // It's fine
+
 		capture <- buf.String()
 	}()
 
@@ -264,6 +269,7 @@ func captureStdout(t *testing.T, printer func()) string {
 
 	// Close the writer
 	w.Close()
+
 	captured := <-capture
 
 	return captured
@@ -271,7 +277,9 @@ func captureStdout(t *testing.T, printer func()) string {
 
 func captureStderr(t *testing.T, printer func()) string {
 	t.Helper()
+
 	old := os.Stderr // Backup of the real one
+
 	defer func() {
 		os.Stderr = old // Set it back even if we error later
 	}()
@@ -289,6 +297,7 @@ func captureStderr(t *testing.T, printer func()) string {
 	go func() {
 		buf := new(bytes.Buffer)
 		io.Copy(buf, r) //nolint: errcheck // It's fine
+
 		capture <- buf.String()
 	}()
 
@@ -297,6 +306,7 @@ func captureStderr(t *testing.T, printer func()) string {
 
 	// Close the writer
 	w.Close()
+
 	captured := <-capture
 
 	return captured

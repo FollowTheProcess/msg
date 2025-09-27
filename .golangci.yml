@@ -29,6 +29,7 @@ linters:
     - gocyclo # cyclop does this instead
     - godox # "todo" and "fixme" comments are allowed
     - goheader # No need
+    - goprintffuncname # I do a lot of this in here
     - gosmopolitan # No need
     - grouper # Imports take care of themselves, rest is common sense
     - ireturn # This is just not necessary or practical in a real codebase
@@ -44,7 +45,6 @@ linters:
     - varnamelen # Lots of false positives of things that are fine
     - wrapcheck # Not every error must be wrapped
     - wsl # Very aggressive, some of this I like but tend to do anyway
-    - wsl_v5 # Very aggressive, some of this I like but tend to do anyway
 
   exclusions:
     presets:
