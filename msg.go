@@ -148,7 +148,7 @@ func Ferr(w io.Writer, err error) {
 	// on colons is a bit of a hack that relies on convention `fmt.Errorf("some error: %w", err)`
 	// but it works well enough for me for now as I always do that anyway
 
-	chain := strings.Split(err.Error(), ":")
+	chain := strings.Split(err.Error(), ": ")
 	root := chain[0]
 	causes := chain[1:]
 
