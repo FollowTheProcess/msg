@@ -1,0 +1,4 @@
+[1;31mError[0m: backup failed
+├─ [1mcause[0m: disk full
+╰─ [1mcause[0m: network
+   ╰─ [1mcause[0m: connection refused

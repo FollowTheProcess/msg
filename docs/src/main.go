@@ -15,13 +15,17 @@ func main() {
 
 	fmt.Println()
 
-	// Simulate a wrapped tree of errors throughout
-	// your application
-	err := errors.New("bad file permissions")
-	one := fmt.Errorf("could not read DB config: %w", err)
-	two := fmt.Errorf("failed to insert new record: %w", one)
-	three := fmt.Errorf("could not complete transaction: %w", two)
+	// Wrapped chains and errors.Join values render as a tree, with branches
+	// for every parallel cause and vertical continuation through deeper levels.
+	sshIssue := fmt.Errorf("ssh key %q: %w", "id_rsa", errors.New("file not found"))
+	dbIssue := fmt.Errorf(
+		"database: %w",
+		fmt.Errorf("dial tcp 10.0.0.5:5432: %w", errors.New("connection refused")),
+	)
+	configIssue := errors.New("missing required field 'region'")
 
-	// Bubble them all up
-	msg.Err(three)
+	checks := errors.Join(sshIssue, dbIssue, configIssue)
+	err := fmt.Errorf("preflight checks failed: %w", checks)
+
+	msg.Err(err)
 }
