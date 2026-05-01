@@ -85,13 +85,16 @@ func Error(format string, a ...any) {
 //	err := errors.New("Uh oh!")
 //	msg.Err(err) // Equivalent to msg.Error("%v", err)
 //
-// In the case of wrapped errors with [fmt.Errorf], Err recursively unwraps the error,
-// showing each of the errors in the causal chain in a tree-like structure.
+// In the case of wrapped errors with [fmt.Errorf], Err unwraps the error and renders
+// the causal chain as a tree:
 //
 //	root := errors.New("some deep error")
 //	wrapped := fmt.Errorf("could not process file: %w", root)
 //	again := fmt.Errorf("failed to do thing: %w", wrapped)
-//	msg.Err(again) // Unwraps the above and shows each cause as a new indented line
+//	msg.Err(again)
+//
+// Multi-errors produced by [errors.Join] are rendered as branches at the point they
+// appear in the chain.
 //
 // The intended use case for Err is at the top level of a CLI application where all
 // errors are eventually bubbled up to with the appropriate context, which Err can
@@ -113,13 +116,16 @@ func Ferror(w io.Writer, format string, a ...any) {
 //	err := errors.New("Uh oh!")
 //	msg.Ferr(os.Stderr, err) // Equivalent to msg.Err(err)
 //
-// In the case of wrapped errors with [fmt.Errorf], Ferr recursively unwraps the error,
-// showing each of the errors in the causal chain in a tree-like structure.
+// In the case of wrapped errors with [fmt.Errorf], Ferr unwraps the error and renders
+// the causal chain as a tree:
 //
 //	root := errors.New("some deep error")
 //	wrapped := fmt.Errorf("could not process file: %w", root)
 //	again := fmt.Errorf("failed to do thing: %w", wrapped)
-//	msg.Ferr(os.Stderr, again) // Unwraps the above and shows each cause as a new indented line
+//	msg.Ferr(os.Stderr, again)
+//
+// Multi-errors produced by [errors.Join] are rendered as branches at the point they
+// appear in the chain.
 //
 // The intended use case for Ferr and [Err] is at the top level of a CLI application where all
 // errors are eventually bubbled up to with the appropriate context, which can
@@ -129,36 +135,95 @@ func Ferr(w io.Writer, err error) {
 		return
 	}
 
-	// No wrapped errors, just do what [Error] does
-	if errors.Unwrap(err) == nil {
+	own, children := decompose(err)
+
+	// A bare [errors.Join] at the root has no headline of its own, its message
+	// is just its children concatenated. Fall back to a plain render so we don't
+	// emit an empty "Error:" line.
+	if own == "" && len(children) > 0 {
 		Ferror(w, "%v", err)
 		return
 	}
 
-	// TODO(@FollowTheProcess): We should be able to build this stack of errors by
-	// calling Unwrap alone as that is less fragile, but because each layer of unwrap contains
-	// all the child elements too we need something a bit clever to recurse all the way down to <nil>, then
-	// build the stack back up from the bottom up. For example you'd get something like:
-	// failed to do something: could not find file: invalid permissions: super deep error
-	// cause: could not find file: invalid permissions: super deep error
-	// cause: invalid permissions: super deep error
-	// cause: super deep error
-	//
-	// With each level having all the child errors in so you get lots of duplication, splitting
-	// on colons is a bit of a hack that relies on convention `fmt.Errorf("some error: %w", err)`
-	// but it works well enough for me for now as I always do that anyway
+	Ferror(w, "%v", own)
+	renderCauses(w, children, "")
+}
 
-	chain := strings.Split(err.Error(), ": ")
-	root := chain[0]
-	causes := chain[1:]
+// decompose returns err's own message contribution and its child errors. own
+// is "" when err is a transparent multi-error such as a bare [errors.Join],
+// whose message is exactly its children's joined by "\n" with no headline.
+func decompose(err error) (own string, children []error) {
+	s := err.Error()
 
-	Ferror(w, "%v", strings.TrimSpace(root))
+	if multi, ok := err.(interface{ Unwrap() []error }); ok {
+		kids := multi.Unwrap()
+		joined := errors.Join(kids...).Error()
 
-	indent := 0
-	for _, cause := range causes {
-		fmt.Fprintf(w, "%s╰─ %s: %v\n", strings.Repeat(" ", indent), styleCause.Sprint("cause"), strings.TrimSpace(cause))
-		indent += 3
+		if s == joined {
+			return "", kids
+		}
+
+		if before, found := strings.CutSuffix(s, ": "+joined); found {
+			return before, kids
+		}
+
+		// Unconventional multi-error format (e.g. [fmt.Errorf] with multiple
+		// %w verbs interleaved with text): render as a leaf so children
+		// don't appear both inline in the headline and as branches below.
+		return s, nil
 	}
+
+	if next := errors.Unwrap(err); next != nil {
+		if before, found := strings.CutSuffix(s, ": "+next.Error()); found {
+			return before, []error{next}
+		}
+
+		return s, []error{next}
+	}
+
+	return s, nil
+}
+
+// renderCauses writes children as a tree under the given line prefix.
+func renderCauses(w io.Writer, parents []error, prefix string) {
+	causes := decomposeAll(parents)
+	for i, c := range causes {
+		last := i == len(causes)-1
+
+		connector, nextPrefix := "├─", prefix+"│  "
+		if last {
+			connector, nextPrefix = "╰─", prefix+"   "
+		}
+
+		fmt.Fprintf(w, "%s%s %s: %s\n", prefix, connector, styleCause.Sprint("cause"), c.own)
+		renderCauses(w, c.children, nextPrefix)
+	}
+}
+
+// cause is a renderable tree node: an error decomposed into its own message
+// and any further children to recurse into.
+type cause struct {
+	own      string
+	children []error
+}
+
+// decomposeAll decomposes each err and inlines transparent multi-errors so
+// the returned slice contains only renderable nodes, never an empty
+// headline that would print as a stub branch.
+func decomposeAll(errs []error) []cause {
+	var out []cause
+
+	for _, e := range errs {
+		own, children := decompose(e)
+		if own == "" && len(children) > 0 {
+			out = append(out, decomposeAll(children)...)
+			continue
+		}
+
+		out = append(out, cause{own: own, children: children})
+	}
+
+	return out
 }
 
 // Warn prints a warning message with optional format args to stdout.

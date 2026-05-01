@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"testing"
 
 	"go.followtheprocess.codes/msg"
+	"go.followtheprocess.codes/snapshot"
+	"go.followtheprocess.codes/test"
 )
 
 const (
@@ -42,11 +42,14 @@ func TestSuccessCaptured(t *testing.T) {
 	successFunc := func() {
 		msg.Success("Worked")
 	}
-	got := captureStdout(t, successFunc)
+	stdout, _ := test.CaptureOutput(t, func() error {
+		successFunc()
+		return nil
+	})
 	want := fmt.Sprintf("%sSuccess%s: Worked\n", successCode, resetCode)
 
-	if got != want {
-		t.Errorf("got %q, wanted %q", got, want)
+	if stdout != want {
+		t.Errorf("got %q, wanted %q", stdout, want)
 	}
 }
 
@@ -65,11 +68,14 @@ func TestErrorCaptured(t *testing.T) {
 	errorFunc := func() {
 		msg.Error("Bad number (%v)", 42)
 	}
-	got := captureStderr(t, errorFunc)
+	_, stderr := test.CaptureOutput(t, func() error {
+		errorFunc()
+		return nil
+	})
 	want := fmt.Sprintf("%sError%s: Bad number (42)\n", errorCode, resetCode)
 
-	if got != want {
-		t.Errorf("got %q, wanted %q", got, want)
+	if stderr != want {
+		t.Errorf("got %q, wanted %q", stderr, want)
 	}
 }
 
@@ -118,17 +124,79 @@ func TestErr(t *testing.T) {
 	})
 }
 
+func TestErrTree(t *testing.T) {
+	cases := []struct {
+		err  error
+		name string
+	}{
+		{
+			err: func() error {
+				a := errors.New("disk full")
+				b := errors.New("network down")
+
+				return fmt.Errorf("backup failed: %w", errors.Join(a, b))
+			}(),
+			name: "multi at leaf",
+		},
+		{
+			err: func() error {
+				deep := errors.New("connection refused")
+				inner := fmt.Errorf("network: %w", deep)
+				other := errors.New("disk full")
+
+				return fmt.Errorf("backup failed: %w", errors.Join(inner, other))
+			}(),
+			name: "multi with chain in non-last branch",
+		},
+		{
+			err: func() error {
+				deep := errors.New("connection refused")
+				inner := fmt.Errorf("network: %w", deep)
+				other := errors.New("disk full")
+
+				return fmt.Errorf("backup failed: %w", errors.Join(other, inner))
+			}(),
+			name: "multi with chain in last branch",
+		},
+		{
+			err: func() error {
+				deep := errors.New("connection refused")
+				middle := fmt.Errorf("network down: %w", deep)
+				other := errors.New("disk full")
+				joined := errors.Join(other, middle)
+				wrapped := fmt.Errorf("step 2: %w", joined)
+
+				return fmt.Errorf("pipeline failed: %w", wrapped)
+			}(),
+			name: "chain through multi to chain",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			buf := new(bytes.Buffer)
+			msg.Ferr(buf, tc.err)
+
+			snap := snapshot.New(t, snapshot.WithFormatter(snapshot.TextFormatter()))
+			snap.Snap(buf.String())
+		})
+	}
+}
+
 func TestErrCaptured(t *testing.T) {
 	t.Run("plain", func(t *testing.T) {
 		errorFunc := func() {
 			err := errors.New("bang")
 			msg.Err(err)
 		}
-		got := captureStderr(t, errorFunc)
+		_, stderr := test.CaptureOutput(t, func() error {
+			errorFunc()
+			return nil
+		})
 		want := fmt.Sprintf("%sError%s: bang\n", errorCode, resetCode)
 
-		if got != want {
-			t.Errorf("got %q, wanted %q", got, want)
+		if stderr != want {
+			t.Errorf("got %q, wanted %q", stderr, want)
 		}
 	})
 	t.Run("wrapped", func(t *testing.T) {
@@ -144,11 +212,15 @@ func TestErrCaptured(t *testing.T) {
    ╰─ %[3]scause%[2]s: dingle cannot dangle on version <2
       ╰─ %[3]scause%[2]s: bang
 `
-		got := captureStderr(t, errorFunc)
+
+		_, stderr := test.CaptureOutput(t, func() error {
+			errorFunc()
+			return nil
+		})
 		want := fmt.Sprintf(wantTemplate, errorCode, resetCode, causeCode)
 
-		if got != want {
-			t.Errorf("got %q, wanted %q", got, want)
+		if stderr != want {
+			t.Errorf("got %q, wanted %q", stderr, want)
 		}
 	})
 }
@@ -168,11 +240,15 @@ func TestWarnCaptured(t *testing.T) {
 	warnFunc := func() {
 		msg.Warn("Skipping something (%d)", 42)
 	}
-	got := captureStdout(t, warnFunc)
+	stdout, _ := test.CaptureOutput(t, func() error {
+		warnFunc()
+		return nil
+	})
+
 	want := fmt.Sprintf("%sWarning%s: Skipping something (42)\n", warnCode, resetCode)
 
-	if got != want {
-		t.Errorf("got %q, wanted %q", got, want)
+	if stdout != want {
+		t.Errorf("got %q, wanted %q", stdout, want)
 	}
 }
 
@@ -191,11 +267,16 @@ func TestInfoCaptured(t *testing.T) {
 	infoFunc := func() {
 		msg.Info("You are %d years old", 29)
 	}
-	got := captureStdout(t, infoFunc)
+	stdout, _ := test.CaptureOutput(t, func() error {
+		infoFunc()
+
+		return nil
+	})
+
 	want := fmt.Sprintf("%sInfo%s: You are 29 years old\n", infoCode, resetCode)
 
-	if got != want {
-		t.Errorf("got %q, wanted %q", got, want)
+	if stdout != want {
+		t.Errorf("got %q, wanted %q", stdout, want)
 	}
 }
 
@@ -214,11 +295,16 @@ func TestTitleCaptured(t *testing.T) {
 	titleFunc := func() {
 		msg.Title("Section Header")
 	}
-	got := captureStdout(t, titleFunc)
+
+	stdout, _ := test.CaptureOutput(t, func() error {
+		titleFunc()
+		return nil
+	})
+
 	want := fmt.Sprintf("\n%sSection Header%s\n\n", titleCode, resetCode)
 
-	if got != want {
-		t.Errorf("got %q, wanted %q", got, want)
+	if stdout != want {
+		t.Errorf("got %q, wanted %q", stdout, want)
 	}
 }
 
@@ -236,78 +322,4 @@ func TestVisual(t *testing.T) {
 	three := fmt.Errorf("could not complete transaction: %w", two)
 
 	msg.Err(three)
-}
-
-func captureStdout(t *testing.T, printer func()) string {
-	t.Helper()
-
-	old := os.Stdout // Backup of the real one
-
-	defer func() {
-		os.Stdout = old // Set it back even if we error later
-	}()
-
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Fatalf("os.Pipe() returned an error: %v", err)
-	}
-
-	// Set stdout to our new pipe
-	os.Stdout = w
-
-	capture := make(chan string)
-	// Copy in a goroutine so printing can't block forever
-	go func() {
-		buf := new(bytes.Buffer)
-		io.Copy(buf, r) //nolint: errcheck // It's fine
-
-		capture <- buf.String()
-	}()
-
-	// Call our test function that prints to stdout
-	printer()
-
-	// Close the writer
-	w.Close()
-
-	captured := <-capture
-
-	return captured
-}
-
-func captureStderr(t *testing.T, printer func()) string {
-	t.Helper()
-
-	old := os.Stderr // Backup of the real one
-
-	defer func() {
-		os.Stderr = old // Set it back even if we error later
-	}()
-
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Fatalf("os.Pipe() returned an error: %v", err)
-	}
-
-	// Set stderr to our new pipe
-	os.Stderr = w
-
-	capture := make(chan string)
-	// Copy in a goroutine so printing can't block forever
-	go func() {
-		buf := new(bytes.Buffer)
-		io.Copy(buf, r) //nolint: errcheck // It's fine
-
-		capture <- buf.String()
-	}()
-
-	// Call our test function that prints to stderr
-	printer()
-
-	// Close the writer
-	w.Close()
-
-	captured := <-capture
-
-	return captured
 }

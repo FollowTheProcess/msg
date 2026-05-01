@@ -29,6 +29,7 @@ linters:
     - gocyclo # cyclop does this instead
     - godox # "todo" and "fixme" comments are allowed
     - goheader # No need
+    - gomodguard # Deprecated
     - goprintffuncname # I do a lot of this in here
     - gosmopolitan # No need
     - grouper # Imports take care of themselves, rest is common sense
