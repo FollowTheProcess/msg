@@ -1,0 +1,5 @@
+[1;31mError[0m: pipeline failed
+╰─ [1mcause[0m: step 2
+   ├─ [1mcause[0m: disk full
+   ╰─ [1mcause[0m: network down
+      ╰─ [1mcause[0m: connection refused
