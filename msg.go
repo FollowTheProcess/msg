@@ -142,6 +142,7 @@ func Ferr(w io.Writer, err error) {
 	// emit an empty "Error:" line.
 	if own == "" && len(children) > 0 {
 		Ferror(w, "%v", err)
+
 		return
 	}
 
@@ -217,6 +218,7 @@ func decomposeAll(errs []error) []cause {
 		own, children := decompose(e)
 		if own == "" && len(children) > 0 {
 			out = append(out, decomposeAll(children)...)
+
 			continue
 		}
 

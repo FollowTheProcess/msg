@@ -44,6 +44,7 @@ func TestSuccessCaptured(t *testing.T) {
 	}
 	stdout, _ := test.CaptureOutput(t, func() error {
 		successFunc()
+
 		return nil
 	})
 	want := fmt.Sprintf("%sSuccess%s: Worked\n", successCode, resetCode)
@@ -70,6 +71,7 @@ func TestErrorCaptured(t *testing.T) {
 	}
 	_, stderr := test.CaptureOutput(t, func() error {
 		errorFunc()
+
 		return nil
 	})
 	want := fmt.Sprintf("%sError%s: Bad number (42)\n", errorCode, resetCode)
@@ -191,6 +193,7 @@ func TestErrCaptured(t *testing.T) {
 		}
 		_, stderr := test.CaptureOutput(t, func() error {
 			errorFunc()
+
 			return nil
 		})
 		want := fmt.Sprintf("%sError%s: bang\n", errorCode, resetCode)
@@ -215,6 +218,7 @@ func TestErrCaptured(t *testing.T) {
 
 		_, stderr := test.CaptureOutput(t, func() error {
 			errorFunc()
+
 			return nil
 		})
 		want := fmt.Sprintf(wantTemplate, errorCode, resetCode, causeCode)
@@ -242,6 +246,7 @@ func TestWarnCaptured(t *testing.T) {
 	}
 	stdout, _ := test.CaptureOutput(t, func() error {
 		warnFunc()
+
 		return nil
 	})
 
@@ -298,6 +303,7 @@ func TestTitleCaptured(t *testing.T) {
 
 	stdout, _ := test.CaptureOutput(t, func() error {
 		titleFunc()
+
 		return nil
 	})
 
