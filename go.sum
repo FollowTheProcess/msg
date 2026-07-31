@@ -8,6 +8,8 @@ go.followtheprocess.codes/snapshot v0.11.0 h1:kZniEW/+QB9i9/wdHS9q6AMueAYtE4YFyQ
 go.followtheprocess.codes/snapshot v0.11.0/go.mod h1:Sj2A1XQ3gmt0jKUsp8C5X9OPstMKo7VI5vcfR38/+s0=
 go.followtheprocess.codes/snapshot v1.0.0 h1:k0t0wI18qw92hDXVyfTyZx20s0ohrUqJudgthWWs+hU=
 go.followtheprocess.codes/snapshot v1.0.0/go.mod h1:Sj2A1XQ3gmt0jKUsp8C5X9OPstMKo7VI5vcfR38/+s0=
+go.followtheprocess.codes/snapshot v1.1.0 h1:hXaMzSRHmf3nfjuj/BSr2nbTfR9QeKgpXzIskPQsHf0=
+go.followtheprocess.codes/snapshot v1.1.0/go.mod h1:Sj2A1XQ3gmt0jKUsp8C5X9OPstMKo7VI5vcfR38/+s0=
 go.followtheprocess.codes/test v1.4.0 h1:LBZYn2MqOW20HLe1AJm3lMLplSWH+zycfC7mmS9NF2w=
 go.followtheprocess.codes/test v1.4.0/go.mod h1:/Lq3YrwTqU/tb1wbO+Kt7Gs1I3qzFu/o/CUykOavoVA=
 go.yaml.in/yaml/v4 v4.0.0-rc.4 h1:UP4+v6fFrBIb1l934bDl//mmnoIZEDK0idg1+AIvX5U=
